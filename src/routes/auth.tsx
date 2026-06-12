@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
@@ -22,6 +22,7 @@ type Mode = "login" | "register";
 
 function AuthPage() {
   const [mode, setMode] = useState<Mode>("login");
+  const navigate = useNavigate();
 
   return (
     <main dir="rtl" className="min-h-screen bg-background text-foreground">
@@ -92,6 +93,7 @@ function AuthPage() {
                   className="mt-8 space-y-4"
                   onSubmit={(e) => {
                     e.preventDefault();
+                    navigate({ to: "/dashboard" });
                   }}
                 >
                   {mode === "register" && (
