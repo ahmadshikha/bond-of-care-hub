@@ -20,7 +20,7 @@ import { ThemeToggle } from "./theme-toggle";
 
 const nav = [
   { to: "/dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
-  { to: "/donors", label: "المتبرعون", icon: HeartHandshake },
+  { to: "/donations", label: "التبرعات", icon: HeartHandshake },
   { to: "/institutions", label: "المؤسسات", icon: Building2 },
   { to: "/beneficiaries", label: "المستفيدون", icon: Users },
   { to: "/requests", label: "الطلبات", icon: FileText },
