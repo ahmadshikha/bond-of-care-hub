@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrackingRouteImport } from './routes/tracking'
 import { Route as InstitutionsRouteImport } from './routes/institutions'
 import { Route as DonationsRouteImport } from './routes/donations'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TrackingRoute = TrackingRouteImport.update({
+  id: '/tracking',
+  path: '/tracking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InstitutionsRoute = InstitutionsRouteImport.update({
   id: '/institutions',
   path: '/institutions',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
+  '/tracking': typeof TrackingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
+  '/tracking': typeof TrackingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,33 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
+  '/tracking': typeof TrackingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/donations' | '/institutions'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/donations'
+    | '/institutions'
+    | '/tracking'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/donations' | '/institutions'
-  id: '__root__' | '/' | '/auth' | '/dashboard' | '/donations' | '/institutions'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/donations'
+    | '/institutions'
+    | '/tracking'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/donations'
+    | '/institutions'
+    | '/tracking'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +105,18 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DonationsRoute: typeof DonationsRoute
   InstitutionsRoute: typeof InstitutionsRoute
+  TrackingRoute: typeof TrackingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tracking': {
+      id: '/tracking'
+      path: '/tracking'
+      fullPath: '/tracking'
+      preLoaderRoute: typeof TrackingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/institutions': {
       id: '/institutions'
       path: '/institutions'
@@ -125,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DonationsRoute: DonationsRoute,
   InstitutionsRoute: InstitutionsRoute,
+  TrackingRoute: TrackingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

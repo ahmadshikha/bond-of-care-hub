@@ -14,6 +14,7 @@ import {
   Bell,
   Search,
   ChevronDown,
+  Truck,
 } from "lucide-react";
 import { KawnLogo } from "./kawn-logo";
 import { ThemeToggle } from "./theme-toggle";
@@ -24,6 +25,7 @@ const nav = [
   { to: "/institutions", label: "المؤسسات", icon: Building2 },
   { to: "/beneficiaries", label: "المستفيدون", icon: Users },
   { to: "/requests", label: "الطلبات", icon: FileText },
+  { to: "/tracking", label: "تتبع التسليم", icon: Truck },
   { to: "/delivered", label: "المُسلَّمة", icon: PackageCheck },
   { to: "/settings", label: "الإعدادات", icon: Settings },
 ];
