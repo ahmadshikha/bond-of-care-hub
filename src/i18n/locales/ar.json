@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "name": "كون",
+    "subtitle": "لوحة المشرف"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "donations": "التبرعات",
+    "institutions": "المؤسسات",
+    "beneficiaries": "المستفيدون",
+    "requests": "الطلبات",
+    "tracking": "تتبع التسليم",
+    "delivered": "المُسلَّمة",
+    "settings": "الإعدادات",
+    "collapse": "طيّ القائمة",
+    "logout": "تسجيل الخروج"
+  },
+  "header": {
+    "search": "ابحث عن متبرع، مؤسسة أو طلب…",
+    "notifications": "الإشعارات",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "role": "مشرف عام"
+  },
+  "lang": {
+    "label": "اللغة",
+    "ar": "العربية",
+    "en": "الإنجليزية"
+  }
+}
