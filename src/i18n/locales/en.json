@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "name": "Kawn",
+    "subtitle": "Admin Panel"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "donations": "Donations",
+    "institutions": "Institutions",
+    "beneficiaries": "Beneficiaries",
+    "requests": "Requests",
+    "tracking": "Delivery Tracking",
+    "delivered": "Delivered",
+    "settings": "Settings",
+    "collapse": "Collapse menu",
+    "logout": "Log out"
+  },
+  "header": {
+    "search": "Search for a donor, institution or request…",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Log out",
+    "role": "Super Admin"
+  },
+  "lang": {
+    "label": "Language",
+    "ar": "Arabic",
+    "en": "English"
+  }
+}

@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   Users,
@@ -18,25 +19,28 @@ import {
 } from "lucide-react";
 import { KawnLogo } from "./kawn-logo";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 
 const nav = [
-  { to: "/dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
-  { to: "/donations", label: "التبرعات", icon: HeartHandshake },
-  { to: "/institutions", label: "المؤسسات", icon: Building2 },
-  { to: "/beneficiaries", label: "المستفيدون", icon: Users },
-  { to: "/requests", label: "الطلبات", icon: FileText },
-  { to: "/tracking", label: "تتبع التسليم", icon: Truck },
-  { to: "/delivered", label: "المُسلَّمة", icon: PackageCheck },
-  { to: "/settings", label: "الإعدادات", icon: Settings },
+  { to: "/dashboard", key: "dashboard", icon: LayoutDashboard },
+  { to: "/donations", key: "donations", icon: HeartHandshake },
+  { to: "/institutions", key: "institutions", icon: Building2 },
+  { to: "/beneficiaries", key: "beneficiaries", icon: Users },
+  { to: "/requests", key: "requests", icon: FileText },
+  { to: "/tracking", key: "tracking", icon: Truck },
+  { to: "/delivered", key: "delivered", icon: PackageCheck },
+  { to: "/settings", key: "settings", icon: Settings },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t, i18n } = useTranslation();
+  const dir = i18n.language?.startsWith("ar") ? "rtl" : "ltr";
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background text-foreground">
+    <div dir={dir} className="min-h-screen bg-background text-foreground">
       {/* Ambient backdrop */}
       <div
         aria-hidden
@@ -60,8 +64,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               <KawnLogo size={36} />
               {!collapsed && (
                 <div className="overflow-hidden">
-                  <h1 className="text-lg font-extrabold leading-none">كون</h1>
-                  <p className="mt-1 text-[10px] text-muted-foreground">لوحة المشرف</p>
+                  <h1 className="text-lg font-extrabold leading-none">{t("brand.name")}</h1>
+                  <p className="mt-1 text-[10px] text-muted-foreground">{t("brand.subtitle")}</p>
                 </div>
               )}
             </div>
@@ -100,7 +104,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                       className={`h-5 w-5 flex-shrink-0 ${active ? "text-gold" : ""}`}
                       strokeWidth={active ? 2.4 : 2}
                     />
-                    {!collapsed && <span className="truncate">{item.label}</span>}
+                    {!collapsed && <span className="truncate text-start">{t(`nav.${item.key}`)}</span>}
                   </Link>
                 );
               })}
@@ -113,13 +117,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-all hover:bg-muted/60 hover:text-foreground"
               >
                 <ChevronRight
-                  className={`h-5 w-5 transition-transform ${collapsed ? "" : "rotate-180"}`}
+                  className={`h-5 w-5 transition-transform ${
+                    dir === "rtl" ? (collapsed ? "" : "rotate-180") : collapsed ? "rotate-180" : ""
+                  }`}
                 />
-                {!collapsed && <span>طيّ القائمة</span>}
+                {!collapsed && <span>{t("nav.collapse")}</span>}
               </button>
               <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-destructive transition-all hover:bg-destructive/10">
                 <LogOut className="h-5 w-5" />
-                {!collapsed && <span>تسجيل الخروج</span>}
+                {!collapsed && <span>{t("nav.logout")}</span>}
               </button>
             </div>
           </div>
@@ -133,15 +139,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="relative hidden max-w-md flex-1 md:block">
               <Search className="pointer-events-none absolute top-1/2 start-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
-                placeholder="ابحث عن متبرع، مؤسسة أو طلب…"
-                className="h-11 w-full rounded-xl border border-border bg-card ps-10 pe-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-gold focus:ring-4 focus:ring-gold/15"
+                placeholder={t("header.search")}
+                className="h-11 w-full rounded-xl border border-border bg-card ps-10 pe-4 text-sm text-start outline-none transition-all placeholder:text-muted-foreground focus:border-gold focus:ring-4 focus:ring-gold/15"
               />
             </div>
 
             <div className="ms-auto flex items-center gap-2">
               {/* Notifications */}
               <button
-                aria-label="الإشعارات"
+                aria-label={t("header.notifications")}
                 className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card transition-all hover:scale-105 hover:border-gold active:scale-95"
               >
                 <Bell className="h-4.5 w-4.5" />
@@ -152,6 +158,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </button>
 
               <ThemeToggle />
+              <LanguageSwitcher />
 
               {/* Profile dropdown */}
               <div className="relative">
@@ -162,7 +169,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground dark:bg-gold dark:text-gold-foreground">
                     ع
                   </span>
-                  <span className="hidden text-sm font-semibold sm:block">عبدالله</span>
+                  <span className="hidden text-sm font-semibold sm:block">
+                    {dir === "rtl" ? "عبدالله" : "Abdullah"}
+                  </span>
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </button>
                 {profileOpen && (
@@ -172,21 +181,21 @@ export function AppShell({ children }: { children: ReactNode }) {
                     className="absolute end-0 mt-2 w-56 overflow-hidden rounded-2xl border border-border bg-popover shadow-xl"
                   >
                     <div className="border-b border-border p-4">
-                      <p className="text-sm font-bold">عبدالله الراشد</p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">مشرف عام</p>
+                      <p className="text-sm font-bold">{dir === "rtl" ? "عبدالله الراشد" : "Abdullah Al-Rashed"}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{t("header.role")}</p>
                     </div>
                     <div className="p-2 text-sm">
                       <a className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted" href="#">
-                        <Users className="h-4 w-4" /> الملف الشخصي
+                        <Users className="h-4 w-4" /> {t("header.profile")}
                       </a>
                       <a className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted" href="#">
-                        <Settings className="h-4 w-4" /> الإعدادات
+                        <Settings className="h-4 w-4" /> {t("header.settings")}
                       </a>
                       <a
                         className="flex items-center gap-2 rounded-lg px-3 py-2 text-destructive hover:bg-destructive/10"
                         href="/auth"
                       >
-                        <LogOut className="h-4 w-4" /> تسجيل الخروج
+                        <LogOut className="h-4 w-4" /> {t("header.logout")}
                       </a>
                     </div>
                   </motion.div>
