@@ -14,6 +14,7 @@ import {
   Bell,
   Search,
   ChevronDown,
+  Truck,
 } from "lucide-react";
 import { KawnLogo } from "./kawn-logo";
 import { ThemeToggle } from "./theme-toggle";
