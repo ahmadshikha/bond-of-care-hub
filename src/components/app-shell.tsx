@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   Users,
@@ -18,22 +19,25 @@ import {
 } from "lucide-react";
 import { KawnLogo } from "./kawn-logo";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
 
 const nav = [
-  { to: "/dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
-  { to: "/donations", label: "التبرعات", icon: HeartHandshake },
-  { to: "/institutions", label: "المؤسسات", icon: Building2 },
-  { to: "/beneficiaries", label: "المستفيدون", icon: Users },
-  { to: "/requests", label: "الطلبات", icon: FileText },
-  { to: "/tracking", label: "تتبع التسليم", icon: Truck },
-  { to: "/delivered", label: "المُسلَّمة", icon: PackageCheck },
-  { to: "/settings", label: "الإعدادات", icon: Settings },
+  { to: "/dashboard", key: "dashboard", icon: LayoutDashboard },
+  { to: "/donations", key: "donations", icon: HeartHandshake },
+  { to: "/institutions", key: "institutions", icon: Building2 },
+  { to: "/beneficiaries", key: "beneficiaries", icon: Users },
+  { to: "/requests", key: "requests", icon: FileText },
+  { to: "/tracking", key: "tracking", icon: Truck },
+  { to: "/delivered", key: "delivered", icon: PackageCheck },
+  { to: "/settings", key: "settings", icon: Settings },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t, i18n } = useTranslation();
+  const dir = i18n.language?.startsWith("ar") ? "rtl" : "ltr";
 
   return (
     <div dir="rtl" className="min-h-screen bg-background text-foreground">
