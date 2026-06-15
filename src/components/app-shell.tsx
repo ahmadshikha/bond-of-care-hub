@@ -167,10 +167,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                   className="flex items-center gap-3 rounded-full border border-border bg-card py-1 ps-1 pe-3 transition-all hover:border-gold"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground dark:bg-gold dark:text-gold-foreground">
-                    ع
+                    {t("header.userName").charAt(0)}
                   </span>
                   <span className="hidden text-sm font-semibold sm:block">
-                    {dir === "rtl" ? "عبدالله" : "Abdullah"}
+                    {t("header.userName")}
                   </span>
                   <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </button>
@@ -181,7 +181,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     className="absolute end-0 mt-2 w-56 overflow-hidden rounded-2xl border border-border bg-popover shadow-xl"
                   >
                     <div className="border-b border-border p-4">
-                      <p className="text-sm font-bold">{dir === "rtl" ? "عبدالله الراشد" : "Abdullah Al-Rashed"}</p>
+                      <p className="text-sm font-bold">{t("header.userFullName")}</p>
                       <p className="mt-0.5 text-xs text-muted-foreground">{t("header.role")}</p>
                     </div>
                     <div className="p-2 text-sm">
