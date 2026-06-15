@@ -1,18 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, Phone, ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Mail, Lock, User, Phone, ArrowLeft, ArrowRight } from "lucide-react";
 import { FloatingInput } from "@/components/floating-input";
 import { KawnLogo } from "@/components/kawn-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import i18n from "@/i18n";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "كون · تسجيل الدخول" },
-      { name: "description", content: "نظام كون لربط المتبرعين بالمستفيدين — سجّل دخولك أو أنشئ حساباً جديداً." },
-      { property: "og:title", content: "كون · المصادقة" },
-      { property: "og:description", content: "نظام ذكي وشفاف يربط المتبرعين بالمستفيدين بسهولة وأمان." },
+      { title: i18n.t("auth.meta.title") },
+      { name: "description", content: i18n.t("auth.meta.description") },
     ],
   }),
   component: AuthPage,
@@ -21,31 +22,38 @@ export const Route = createFileRoute("/auth")({
 type Mode = "login" | "register";
 
 function AuthPage() {
+  const { t, i18n } = useTranslation();
+  const isRtl = i18n.language?.startsWith("ar");
   const [mode, setMode] = useState<Mode>("login");
   const navigate = useNavigate();
+  const Arrow = isRtl ? ArrowLeft : ArrowRight;
+
+  const stats = [
+    { k: "1,245", l: t("auth.hero.stats.donors") },
+    { k: "8,732", l: t("auth.hero.stats.beneficiaries") },
+    { k: "12,540", l: t("auth.hero.stats.delivered") },
+  ];
 
   return (
-    <main dir="rtl" className="min-h-screen bg-background text-foreground">
+    <main dir={isRtl ? "rtl" : "ltr"} className="min-h-screen bg-background text-foreground">
       <div className="grid min-h-screen lg:grid-cols-2">
-        {/* FORM SIDE */}
         <section className="relative flex items-center justify-center px-6 py-12 sm:px-12 lg:py-16">
           <div className="absolute top-6 end-6 flex items-center gap-3">
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
 
           <div className="w-full max-w-md">
-            {/* Logo + brand */}
             <div className="mb-10 flex items-center gap-3">
               <KawnLogo size={48} />
               <div>
-                <h1 className="text-2xl font-extrabold leading-none text-foreground">كون</h1>
+                <h1 className="text-2xl font-extrabold leading-none text-foreground">{t("brand.name")}</h1>
                 <p className="mt-1 text-[11px] font-medium tracking-wide text-muted-foreground">
-                  نظام لربط المتبرعين بالمستفيدين
+                  {t("brand.tagline")}
                 </p>
               </div>
             </div>
 
-            {/* Toggle pill */}
             <div className="relative mb-8 inline-flex rounded-full border border-border bg-muted p-1">
               {(["login", "register"] as Mode[]).map((m) => {
                 const active = mode === m;
@@ -65,7 +73,7 @@ function AuthPage() {
                     <span
                       className={`relative ${active ? "text-primary-foreground dark:text-gold-foreground" : "text-muted-foreground"}`}
                     >
-                      {m === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
+                      {t(`auth.tabs.${m}`)}
                     </span>
                   </button>
                 );
@@ -80,13 +88,11 @@ function AuthPage() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
-                <h2 className="text-3xl font-extrabold tracking-tight">
-                  {mode === "login" ? "مرحباً بعودتك" : "انضم إلى كون"}
+                <h2 className="text-3xl font-extrabold tracking-tight text-start">
+                  {t(`auth.${mode}.title`)}
                 </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {mode === "login"
-                    ? "سجّل دخولك لمتابعة رحلة العطاء."
-                    : "أنشئ حسابك وابدأ بصناعة الأثر اليوم."}
+                <p className="mt-2 text-sm text-muted-foreground text-start">
+                  {t(`auth.${mode}.subtitle`)}
                 </p>
 
                 <form
@@ -97,19 +103,19 @@ function AuthPage() {
                   }}
                 >
                   {mode === "register" && (
-                    <FloatingInput label="الاسم الكامل" icon={<User className="h-4 w-4" />} autoComplete="name" />
+                    <FloatingInput label={t("auth.fields.fullName")} icon={<User className="h-4 w-4" />} autoComplete="name" />
                   )}
                   <FloatingInput
-                    label="البريد الإلكتروني"
+                    label={t("auth.fields.email")}
                     type="email"
                     icon={<Mail className="h-4 w-4" />}
                     autoComplete="email"
                   />
                   {mode === "register" && (
-                    <FloatingInput label="رقم الجوال" type="tel" icon={<Phone className="h-4 w-4" />} />
+                    <FloatingInput label={t("auth.fields.phone")} type="tel" icon={<Phone className="h-4 w-4" />} />
                   )}
                   <FloatingInput
-                    label="كلمة المرور"
+                    label={t("auth.fields.password")}
                     type="password"
                     icon={<Lock className="h-4 w-4" />}
                     autoComplete={mode === "login" ? "current-password" : "new-password"}
@@ -122,13 +128,13 @@ function AuthPage() {
                           type="checkbox"
                           className="h-4 w-4 rounded border-border accent-[var(--gold)]"
                         />
-                        تذكّرني
+                        {t("auth.login.remember")}
                       </label>
                       <a
                         href="#"
                         className="font-semibold text-primary-medium hover:text-primary dark:text-gold dark:hover:text-gold/80"
                       >
-                        نسيت كلمة المرور؟
+                        {t("auth.login.forgot")}
                       </a>
                     </div>
                   )}
@@ -137,13 +143,13 @@ function AuthPage() {
                     type="submit"
                     className="group mt-2 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold tracking-wide text-primary-foreground shadow-[0_12px_30px_-12px_rgba(15,61,46,0.7)] transition-all duration-200 hover:scale-[1.02] hover:bg-primary-medium active:scale-95 dark:bg-gold dark:text-gold-foreground dark:shadow-[0_12px_30px_-12px_rgba(242,201,76,0.5)] dark:hover:bg-gold/90"
                   >
-                    {mode === "login" ? "تسجيل الدخول" : "إنشاء الحساب"}
-                    <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                    {t(`auth.${mode}.submit`)}
+                    <Arrow className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
                   </button>
 
                   <div className="relative my-6 flex items-center gap-3">
                     <span className="h-px flex-1 bg-border" />
-                    <span className="text-[11px] uppercase tracking-widest text-muted-foreground">أو</span>
+                    <span className="text-[11px] uppercase tracking-widest text-muted-foreground">{t("common.or")}</span>
                     <span className="h-px flex-1 bg-border" />
                   </div>
 
@@ -152,30 +158,28 @@ function AuthPage() {
                     className="inline-flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-border bg-card text-sm font-semibold text-foreground transition-all hover:scale-[1.01] hover:border-gold active:scale-95"
                   >
                     <GoogleIcon />
-                    المتابعة باستخدام Google
+                    {t("auth.google")}
                   </button>
                 </form>
               </motion.div>
             </AnimatePresence>
 
             <p className="mt-8 text-center text-xs text-muted-foreground">
-              بمتابعتك، أنت توافق على{" "}
+              {t("auth.terms")}{" "}
               <a href="#" className="font-semibold text-foreground hover:text-primary-medium">
-                الشروط والأحكام
+                {t("auth.termsLink")}
               </a>{" "}
-              و{" "}
+              {t("auth.and")}{" "}
               <a href="#" className="font-semibold text-foreground hover:text-primary-medium">
-                سياسة الخصوصية
+                {t("auth.privacyLink")}
               </a>
               .
             </p>
           </div>
         </section>
 
-        {/* HERO SIDE */}
         <section className="relative hidden overflow-hidden lg:block">
           <div className="absolute inset-0 mesh-kawn" />
-          {/* Decorative blurred orbs */}
           <motion.div
             aria-hidden
             initial={{ scale: 0.8, opacity: 0.6 }}
@@ -193,7 +197,6 @@ function AuthPage() {
             style={{ background: "radial-gradient(circle, rgba(30,90,70,0.9), transparent 70%)" }}
           />
 
-          {/* Heart pattern */}
           <div
             aria-hidden
             className="absolute inset-0 opacity-[0.07]"
@@ -207,11 +210,10 @@ function AuthPage() {
           <div className="relative z-10 flex h-full flex-col justify-between p-12 text-[#F8F6F0]">
             <div className="flex items-center justify-end">
               <span className="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold tracking-widest text-[#F2C94C] backdrop-blur">
-                KAWN · كون
+                {t("auth.hero.badge")}
               </span>
             </div>
 
-            {/* Centered glass card */}
             <div className="flex flex-1 items-center justify-center">
               <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.96 }}
@@ -222,23 +224,19 @@ function AuthPage() {
                 <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-2xl bg-[#0F3D2E]/40 ring-1 ring-[#F2C94C]/30">
                   <KawnLogo size={64} />
                 </div>
-                <h3 className="text-4xl font-extrabold tracking-tight text-[#F8F6F0]">كون</h3>
+                <h3 className="text-4xl font-extrabold tracking-tight text-[#F8F6F0]">{t("brand.name")}</h3>
                 <p className="mt-2 text-sm font-medium text-[#F2C94C]">
-                  نظام لربط المتبرعين بالمستفيدين
+                  {t("brand.tagline")}
                 </p>
                 <div className="mt-6 h-px w-12 mx-auto bg-[#F2C94C]/40" />
                 <p className="mt-6 text-sm leading-relaxed text-[#F8F6F0]/80">
-                  منصة تقنية ذكية وشفافة تضمن وصول التبرعات لمستحقيها بسهولة وأمان.
+                  {t("brand.description")}
                 </p>
               </motion.div>
             </div>
 
             <div className="grid grid-cols-3 gap-4 text-center">
-              {[
-                { k: "1,245", l: "متبرع نشط" },
-                { k: "8,732", l: "مستفيد" },
-                { k: "12,540", l: "تبرع موصّل" },
-              ].map((s) => (
+              {stats.map((s) => (
                 <div
                   key={s.l}
                   className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur"

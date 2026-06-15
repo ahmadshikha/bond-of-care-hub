@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   Search,
   Plus,
@@ -19,15 +20,13 @@ import {
   List as ListIcon,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import i18n from "@/i18n";
 
 export const Route = createFileRoute("/donations")({
   head: () => ({
     meta: [
-      { title: "كون · لوحة التبرعات" },
-      {
-        name: "description",
-        content: "لوحة التبرعات لإدارة العرض والطلب بين المتبرعين والجمعيات الخيرية في نظام كون.",
-      },
+      { title: i18n.t("donations.meta.title") },
+      { name: "description", content: i18n.t("donations.meta.description") },
     ],
   }),
   component: DonationsPage,
@@ -49,50 +48,46 @@ interface Donation {
   category: string;
 }
 
-const seed: Donation[] = [
-  { id: "D-1042", title: "وجبات إفطار جاهزة", sender: "مطاعم الأمل", branch: "فرع الرياض", city: "الرياض", date: "اليوم · 09:30", total: 500, remaining: 320, unit: "وجبة", status: "pending", category: "أغذية" },
-  { id: "D-1041", title: "سلال غذائية شهرية", sender: "مؤسسة البر", branch: "الفرع الرئيسي", city: "جدة", date: "أمس · 14:10", total: 200, remaining: 80, unit: "سلة", status: "approved", category: "أغذية" },
-  { id: "D-1040", title: "ملابس شتوية أطفال", sender: "متاجر النور", branch: "فرع الدمام", city: "الدمام", date: "12 يونيو", total: 350, remaining: 350, unit: "قطعة", status: "pending", category: "ملابس" },
-  { id: "D-1039", title: "أدوية مزمنة", sender: "صيدليات الشفاء", branch: "فرع العليا", city: "الرياض", date: "11 يونيو", total: 120, remaining: 45, unit: "علبة", status: "approved", category: "طبي" },
-  { id: "D-1038", title: "كتب مدرسية", sender: "مكتبات المعرفة", branch: "فرع جدة", city: "جدة", date: "10 يونيو", total: 800, remaining: 0, unit: "كتاب", status: "approved", category: "تعليم" },
-  { id: "D-1037", title: "أثاث منزلي مستعمل", sender: "شركة الأمل", branch: "المقر الرئيسي", city: "الرياض", date: "09 يونيو", total: 40, remaining: 40, unit: "قطعة", status: "rejected", category: "أثاث" },
-  { id: "D-1036", title: "مياه شرب معبأة", sender: "مصنع النور", branch: "المصنع الرئيسي", city: "جدة", date: "اليوم · 11:00", total: 1000, remaining: 720, unit: "كرتون", status: "pending", category: "أغذية" },
-  { id: "D-1035", title: "حقائب مدرسية", sender: "إحسان", branch: "فرع الطائف", city: "الطائف", date: "أمس · 16:40", total: 250, remaining: 110, unit: "حقيبة", status: "approved", category: "تعليم" },
-  { id: "D-1034", title: "طرود رمضانية", sender: "كفالة اليتيم", branch: "فرع القصيم", city: "بريدة", date: "08 يونيو", total: 600, remaining: 600, unit: "طرد", status: "rejected", category: "أغذية" },
-];
+function useStatusMeta() {
+  const { t } = useTranslation();
+  const map: Record<Status, { label: string; dot: string; bg: string; text: string; ring: string; icon: typeof Clock; pulse: boolean }> = {
+    pending: {
+      label: t("donations.status.pending"),
+      dot: "#F2C94C",
+      bg: "rgba(242, 201, 76, 0.18)",
+      text: "#8a6a10",
+      ring: "rgba(242, 201, 76, 0.45)",
+      icon: Clock,
+      pulse: true,
+    },
+    approved: {
+      label: t("donations.status.approved"),
+      dot: "#1E5A46",
+      bg: "rgba(30, 90, 70, 0.14)",
+      text: "#0F3D2E",
+      ring: "rgba(30, 90, 70, 0.35)",
+      icon: CheckCircle2,
+      pulse: false,
+    },
+    rejected: {
+      label: t("donations.status.rejected"),
+      dot: "#B3261E",
+      bg: "rgba(179, 38, 30, 0.10)",
+      text: "#8a1f1a",
+      ring: "rgba(179, 38, 30, 0.35)",
+      icon: XCircle,
+      pulse: false,
+    },
+  };
+  return map;
+}
 
-const statusMeta: Record<Status, { label: string; dot: string; bg: string; text: string; ring: string; icon: typeof Clock; pulse: boolean }> = {
-  pending: {
-    label: "قيد المراجعة",
-    dot: "#F2C94C",
-    bg: "rgba(242, 201, 76, 0.18)",
-    text: "#8a6a10",
-    ring: "rgba(242, 201, 76, 0.45)",
-    icon: Clock,
-    pulse: true,
-  },
-  approved: {
-    label: "مُعتمد",
-    dot: "#1E5A46",
-    bg: "rgba(30, 90, 70, 0.14)",
-    text: "#0F3D2E",
-    ring: "rgba(30, 90, 70, 0.35)",
-    icon: CheckCircle2,
-    pulse: false,
-  },
-  rejected: {
-    label: "مرفوض",
-    dot: "#B3261E",
-    bg: "rgba(179, 38, 30, 0.10)",
-    text: "#8a1f1a",
-    ring: "rgba(179, 38, 30, 0.35)",
-    icon: XCircle,
-    pulse: false,
-  },
-};
+function localeFor(lng?: string) {
+  return lng?.startsWith("ar") ? "ar-EG" : "en-US";
+}
 
 function StatusBadge({ status }: { status: Status }) {
-  const m = statusMeta[status];
+  const m = useStatusMeta()[status];
   const Icon = m.icon;
   return (
     <span
@@ -118,15 +113,17 @@ function StatusBadge({ status }: { status: Status }) {
 }
 
 function ProgressBar({ remaining, total }: { remaining: number; total: number }) {
+  const { t, i18n } = useTranslation();
+  const loc = localeFor(i18n.language);
   const fulfilled = total - remaining;
   const pct = total === 0 ? 0 : Math.round((fulfilled / total) * 100);
   return (
     <div>
       <div className="mb-1.5 flex items-center justify-between text-[11px]">
         <span className="font-bold text-foreground">
-          المتبقي{" "}
-          <span className="text-gold">{remaining.toLocaleString("ar-EG")}</span>
-          <span className="text-muted-foreground"> / {total.toLocaleString("ar-EG")}</span>
+          {t("donations.card.remaining")}{" "}
+          <span className="text-gold">{remaining.toLocaleString(loc)}</span>
+          <span className="text-muted-foreground"> / {total.toLocaleString(loc)}</span>
         </span>
         <span className="font-bold text-muted-foreground">{pct}%</span>
       </div>
@@ -148,6 +145,7 @@ function ProgressBar({ remaining, total }: { remaining: number; total: number })
 }
 
 function DonationCard({ d, onRequest, index }: { d: Donation; onRequest: (d: Donation) => void; index: number }) {
+  const { t } = useTranslation();
   const exhausted = d.remaining === 0;
   return (
     <motion.div
@@ -212,7 +210,7 @@ function DonationCard({ d, onRequest, index }: { d: Donation; onRequest: (d: Don
           />
           <Hand className="h-3.5 w-3.5" />
           <span>
-            {exhausted ? "تم استنفاد الكمية" : d.status === "rejected" ? "غير متاح" : "اطلب التبرع"}
+            {exhausted ? t("donations.card.exhausted") : d.status === "rejected" ? t("donations.card.unavailable") : t("donations.card.request")}
           </span>
         </button>
         <button className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-all hover:border-gold hover:text-foreground">
@@ -230,6 +228,8 @@ function RequestModal({
   donation: Donation | null;
   onClose: () => void;
 }) {
+  const { t, i18n } = useTranslation();
+  const loc = localeFor(i18n.language);
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -250,6 +250,7 @@ function RequestModal({
 
   const max = donation?.remaining ?? 0;
   const pct = donation ? Math.round((qty / donation.total) * 100) : 0;
+  const unitLabel = donation ? t(`donations.units.${donation.unit}`, { defaultValue: donation.unit }) : "";
 
   return (
     <AnimatePresence>
@@ -260,7 +261,6 @@ function RequestModal({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
         >
-          {/* Backdrop */}
           <motion.div
             onClick={onClose}
             initial={{ opacity: 0 }}
@@ -269,7 +269,6 @@ function RequestModal({
             className="absolute inset-0 bg-[#0F3D2E]/70 backdrop-blur-md"
           />
 
-          {/* Glass Card */}
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -282,7 +281,6 @@ function RequestModal({
               backdropFilter: "blur(28px) saturate(160%)",
             }}
           >
-            {/* Ambient gold blob */}
             <div
               aria-hidden
               className="pointer-events-none absolute -top-20 -end-20 h-48 w-48 rounded-full opacity-50 blur-3xl"
@@ -291,7 +289,7 @@ function RequestModal({
 
             <button
               onClick={onClose}
-              aria-label="إغلاق"
+              aria-label={t("donations.modal.close")}
               className="absolute top-4 end-4 flex h-9 w-9 items-center justify-center rounded-full border border-[#0F3D2E]/15 bg-white/60 text-[#0F3D2E] transition-all hover:scale-105 hover:bg-white active:scale-95"
             >
               <X className="h-4 w-4" />
@@ -307,20 +305,19 @@ function RequestModal({
                   className="relative"
                 >
                   <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8a6a10]">
-                    طلب تبرع
+                    {t("donations.modal.eyebrow")}
                   </p>
                   <h2 className="mt-1 text-xl font-extrabold text-[#0F3D2E]">
                     {donation.title}
                   </h2>
                   <p className="mt-1 text-xs text-[#0F3D2E]/70">
-                    من <span className="font-bold">{donation.sender}</span> ·{" "}
+                    {t("donations.modal.from")} <span className="font-bold">{donation.sender}</span> ·{" "}
                     {donation.branch} · {donation.city}
                   </p>
 
-                  {/* Quantity stepper */}
                   <div className="mt-5">
                     <label className="text-xs font-bold text-[#0F3D2E]">
-                      الكمية المطلوبة
+                      {t("donations.modal.quantity")}
                     </label>
                     <div className="mt-2 flex items-center gap-3 rounded-2xl border border-white/40 bg-white/50 p-2 backdrop-blur-sm">
                       <button
@@ -340,7 +337,7 @@ function RequestModal({
                         className="h-10 w-full bg-transparent text-center text-2xl font-extrabold text-[#0F3D2E] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       />
                       <span className="text-xs font-bold text-[#0F3D2E]/70">
-                        {donation.unit}
+                        {unitLabel}
                       </span>
                       <button
                         onClick={() => setQty((q) => Math.min(max, q + 1))}
@@ -350,7 +347,6 @@ function RequestModal({
                       </button>
                     </div>
 
-                    {/* Slider */}
                     <input
                       type="range"
                       min={1}
@@ -361,24 +357,21 @@ function RequestModal({
                     />
                     <div className="mt-1 flex justify-between text-[10px] font-semibold text-[#0F3D2E]/60">
                       <span>1</span>
-                      <span>
-                        {pct}% من إجمالي التبرع
-                      </span>
-                      <span>{max.toLocaleString("ar-EG")}</span>
+                      <span>{t("donations.modal.ofTotal", { pct })}</span>
+                      <span>{max.toLocaleString(loc)}</span>
                     </div>
                   </div>
 
-                  {/* Note */}
                   <div className="mt-4">
                     <label className="text-xs font-bold text-[#0F3D2E]">
-                      ملاحظات إضافية{" "}
-                      <span className="font-normal text-[#0F3D2E]/50">(اختياري)</span>
+                      {t("donations.modal.notes")}{" "}
+                      <span className="font-normal text-[#0F3D2E]/50">{t("donations.modal.optional")}</span>
                     </label>
                     <textarea
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       rows={3}
-                      placeholder="اذكر تفاصيل تساعد المتبرع على الاستجابة لطلبك…"
+                      placeholder={t("donations.modal.notesPlaceholder")}
                       className="mt-2 w-full resize-none rounded-2xl border border-white/40 bg-white/50 p-3 text-sm text-[#0F3D2E] outline-none backdrop-blur-sm transition-all placeholder:text-[#0F3D2E]/40 focus:border-[#F2C94C] focus:ring-4 focus:ring-[#F2C94C]/25"
                     />
                   </div>
@@ -388,13 +381,13 @@ function RequestModal({
                       onClick={onClose}
                       className="flex-1 rounded-xl border border-[#0F3D2E]/15 bg-white/40 px-4 py-2.5 text-sm font-bold text-[#0F3D2E] transition-all hover:bg-white/70"
                     >
-                      إلغاء
+                      {t("donations.modal.cancel")}
                     </button>
                     <button
                       onClick={() => setSubmitted(true)}
                       className="group flex-1 rounded-xl bg-[#0F3D2E] px-4 py-2.5 text-sm font-bold text-[#F8F6F0] shadow-lg shadow-[#0F3D2E]/30 transition-all hover:scale-[1.02] hover:bg-[#1E5A46] active:scale-95"
                     >
-                      تأكيد الطلب
+                      {t("donations.modal.submit")}
                     </button>
                   </div>
                 </motion.div>
@@ -414,16 +407,20 @@ function RequestModal({
                     <CheckCircle2 className="h-8 w-8" strokeWidth={2.5} />
                   </motion.div>
                   <h3 className="mt-4 text-xl font-extrabold text-[#0F3D2E]">
-                    تم إرسال طلبك
+                    {t("donations.modal.successTitle")}
                   </h3>
                   <p className="mt-1 text-sm text-[#0F3D2E]/70">
-                    طلبت {qty.toLocaleString("ar-EG")} {donation.unit} من «{donation.title}». سيتم إشعارك عند الموافقة.
+                    {t("donations.modal.successBody", {
+                      qty: qty.toLocaleString(loc),
+                      unit: unitLabel,
+                      title: donation.title,
+                    })}
                   </p>
                   <button
                     onClick={onClose}
                     className="mt-5 rounded-xl bg-[#0F3D2E] px-6 py-2.5 text-sm font-bold text-[#F8F6F0] transition-all hover:scale-105 hover:bg-[#1E5A46] active:scale-95"
                   >
-                    تم
+                    {t("common.done")}
                   </button>
                 </motion.div>
               )}
@@ -436,76 +433,79 @@ function RequestModal({
 }
 
 function DonationsPage() {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const [active, setActive] = useState<Donation | null>(null);
+  const seed = t("donations.list", { returnObjects: true }) as Donation[];
+  const statusMeta = useStatusMeta();
 
   const filtered = useMemo(
-    () =>
-      seed.filter(
+    () => {
+      const q = query.toLowerCase();
+      return seed.filter(
         (d) =>
           !query ||
-          d.title.includes(query) ||
-          d.sender.includes(query) ||
-          d.city.includes(query),
-      ),
-    [query],
+          d.title.toLowerCase().includes(q) ||
+          d.sender.toLowerCase().includes(q) ||
+          d.city.toLowerCase().includes(q),
+      );
+    },
+    [query, seed],
   );
 
   const columns: { key: Status; label: string; hint: string }[] = [
-    { key: "pending", label: "قيد المراجعة", hint: "بانتظار موافقة المشرف" },
-    { key: "approved", label: "مُعتمد", hint: "متاحة للطلب الآن" },
-    { key: "rejected", label: "مرفوض", hint: "لم تستوفِ المعايير" },
+    { key: "pending", label: t("donations.status.pending"), hint: t("donations.columns.pendingHint") },
+    { key: "approved", label: t("donations.status.approved"), hint: t("donations.columns.approvedHint") },
+    { key: "rejected", label: t("donations.status.rejected"), hint: t("donations.columns.rejectedHint") },
   ];
 
   return (
     <AppShell>
-      {/* Header */}
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">
-            العرض والطلب
+            {t("donations.eyebrow")}
           </p>
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight">
-            لوحة التبرعات
+            {t("donations.title")}
           </h1>
           <p className="mt-1.5 text-sm text-muted-foreground">
-            استعرض التبرعات المتاحة وأرسل طلبات للمؤسسات بسهولة وسلاسة.
+            {t("donations.subtitle")}
           </p>
         </div>
         <button className="inline-flex items-center gap-2 self-start rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:bg-primary-medium active:scale-95 dark:bg-gold dark:text-gold-foreground dark:shadow-gold/20">
           <Plus className="h-4 w-4" />
-          تبرع جديد
+          {t("donations.new")}
         </button>
       </div>
 
-      {/* Controls */}
       <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm md:flex-row md:items-center">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute top-1/2 start-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="ابحث في التبرعات، المتبرعين أو المدن…"
+            placeholder={t("donations.searchPlaceholder")}
             className="h-11 w-full rounded-xl border border-border bg-background ps-10 pe-4 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-gold focus:ring-4 focus:ring-gold/15"
           />
         </div>
         <div className="flex items-center gap-1 rounded-xl bg-muted/60 p-1">
           {[
-            { key: "kanban" as const, icon: LayoutGrid, label: "لوحة" },
-            { key: "list" as const, icon: ListIcon, label: "قائمة" },
+            { key: "kanban" as const, icon: LayoutGrid, label: t("donations.view.kanban") },
+            { key: "list" as const, icon: ListIcon, label: t("donations.view.list") },
           ].map((v) => {
             const Icon = v.icon;
-            const active = view === v.key;
+            const isActive = view === v.key;
             return (
               <button
                 key={v.key}
                 onClick={() => setView(v.key)}
                 className={`relative inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                  active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {active && (
+                {isActive && (
                   <motion.span
                     layoutId="don-view"
                     className="absolute inset-0 rounded-lg bg-card shadow-sm ring-1 ring-gold/40"
@@ -521,7 +521,6 @@ function DonationsPage() {
         </div>
       </div>
 
-      {/* Board */}
       {view === "kanban" ? (
         <div className="grid gap-5 lg:grid-cols-3">
           {columns.map((col) => {
@@ -551,7 +550,7 @@ function DonationsPage() {
                   ))}
                   {items.length === 0 && (
                     <div className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
-                      لا توجد تبرعات في هذا القسم.
+                      {t("donations.emptyColumn")}
                     </div>
                   )}
                 </div>

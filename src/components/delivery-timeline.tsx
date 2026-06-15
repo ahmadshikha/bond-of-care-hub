@@ -1,40 +1,18 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Clock, PackageOpen, Truck, PackageCheck, Check } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export type DeliveryStatus = "pending" | "picked_up" | "in_transit" | "delivered";
 
-export interface TimelineStep {
-  key: DeliveryStatus;
-  ar: string;
-  en: string;
-  icon: LucideIcon;
-  at?: string; // ISO timestamp
-  note?: { ar: string; en: string };
-}
-
 const ORDER: DeliveryStatus[] = ["pending", "picked_up", "in_transit", "delivered"];
 
-const DEFAULT_STEPS: Omit<TimelineStep, "at" | "note">[] = [
-  { key: "pending", ar: "بانتظار الموافقة", en: "Pending", icon: Clock },
-  { key: "picked_up", ar: "تم الاستلام", en: "Picked Up", icon: PackageOpen },
-  { key: "in_transit", ar: "في الطريق", en: "In Transit", icon: Truck },
-  { key: "delivered", ar: "تم التسليم", en: "Delivered", icon: PackageCheck },
-];
-
-function fmt(iso?: string) {
-  if (!iso) return "";
-  try {
-    return new Intl.DateTimeFormat("ar-EG", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
+const STEP_ICONS: Record<DeliveryStatus, LucideIcon> = {
+  pending: Clock,
+  picked_up: PackageOpen,
+  in_transit: Truck,
+  delivered: PackageCheck,
+};
 
 interface Props {
   current: DeliveryStatus;
@@ -42,26 +20,39 @@ interface Props {
 }
 
 export function DeliveryTimeline({ current, timestamps = {} }: Props) {
+  const { t, i18n } = useTranslation();
   const currentIdx = ORDER.indexOf(current);
+  const loc = i18n.language?.startsWith("ar") ? "ar-EG" : "en-US";
+
+  const fmt = (iso?: string) => {
+    if (!iso) return "";
+    try {
+      return new Intl.DateTimeFormat(loc, {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(iso));
+    } catch {
+      return iso;
+    }
+  };
 
   return (
     <div className="relative">
       <ol className="relative space-y-2">
-        {DEFAULT_STEPS.map((step, i) => {
+        {ORDER.map((key, i) => {
           const status: "done" | "active" | "todo" =
             i < currentIdx ? "done" : i === currentIdx ? "active" : "todo";
-          const Icon = step.icon;
-          const ts = timestamps[step.key];
-          const isLast = i === DEFAULT_STEPS.length - 1;
+          const Icon = STEP_ICONS[key];
+          const ts = timestamps[key];
+          const isLast = i === ORDER.length - 1;
 
           return (
-            <li key={step.key} className="relative grid grid-cols-[56px_1fr] gap-4">
-              {/* Icon column with connector */}
+            <li key={key} className="relative grid grid-cols-[56px_1fr] gap-4">
               <div className="relative flex flex-col items-center">
-                {/* Connector line to next step */}
                 {!isLast && (
                   <div className="absolute top-14 bottom-[-8px] start-1/2 -translate-x-1/2 w-[2px]">
-                    {/* dashed track */}
                     <div
                       className="absolute inset-0"
                       style={{
@@ -69,7 +60,6 @@ export function DeliveryTimeline({ current, timestamps = {} }: Props) {
                           "repeating-linear-gradient(to bottom, color-mix(in oklab, #636363 35%, transparent) 0 6px, transparent 6px 12px)",
                       }}
                     />
-                    {/* fill */}
                     <motion.div
                       initial={{ scaleY: 0 }}
                       animate={{ scaleY: status === "done" ? 1 : 0 }}
@@ -80,7 +70,6 @@ export function DeliveryTimeline({ current, timestamps = {} }: Props) {
                   </div>
                 )}
 
-                {/* Dot */}
                 <motion.div
                   initial={{ scale: 0.6, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
@@ -110,25 +99,21 @@ export function DeliveryTimeline({ current, timestamps = {} }: Props) {
                 </motion.div>
               </div>
 
-              {/* Content */}
               <div className="min-h-[56px] pt-1 pb-8">
-                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                  <h3
-                    className={`text-base font-bold ${
-                      status === "todo" ? "text-muted-foreground" : "text-foreground"
-                    }`}
-                  >
-                    {step.ar}
-                  </h3>
-                  <span className="text-xs font-medium text-muted-foreground/80">{step.en}</span>
-                </div>
+                <h3
+                  className={`text-base font-bold ${
+                    status === "todo" ? "text-muted-foreground" : "text-foreground"
+                  }`}
+                >
+                  {t(`tracking.stages.${key}`)}
+                </h3>
                 {ts ? (
                   <p className="mt-1 text-xs font-medium" style={{ color: "#636363" }}>
                     {fmt(ts)}
                   </p>
                 ) : status === "active" ? (
                   <p className="mt-1 text-xs font-medium text-[#1E5A46] dark:text-gold">
-                    جارٍ التنفيذ · In progress
+                    {t("tracking.inProgress")}
                   </p>
                 ) : (
                   <p className="mt-1 text-xs text-muted-foreground/60">— — —</p>
