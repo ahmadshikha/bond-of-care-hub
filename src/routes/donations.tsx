@@ -8,7 +8,7 @@ import {
   Package,
   Calendar,
   MapPin,
-  User,
+  Building2,
   Clock,
   CheckCircle2,
   XCircle,
@@ -18,6 +18,8 @@ import {
   Sparkles,
   LayoutGrid,
   List as ListIcon,
+  Tag,
+  StickyNote,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import i18n from "@/i18n";
@@ -32,62 +34,65 @@ export const Route = createFileRoute("/donations")({
   component: DonationsPage,
 });
 
-type Status = "pending" | "approved" | "rejected";
+type DonationStatus = -1 | 0 | 1;
+
+interface DonationItem {
+  id: string;
+  name: string;
+  description: string;
+  quantity: number;
+  remaining_quantity: number;
+  item_type: string;
+  unit: string;
+  notes: string;
+}
 
 interface Donation {
   id: string;
   title: string;
-  sender: string;
-  branch: string;
-  city: string;
-  date: string;
-  total: number;
-  remaining: number;
-  unit: string;
-  status: Status;
-  category: string;
+  description: string;
+  status: DonationStatus;
+  notes: string;
+  sent_at: string;
+  sender_branch: string;
+  sender_city: string;
+  items: DonationItem[];
 }
 
-function useStatusMeta() {
-  const { t } = useTranslation();
-  const map: Record<Status, { label: string; dot: string; bg: string; text: string; ring: string; icon: typeof Clock; pulse: boolean }> = {
-    pending: {
-      label: t("donations.status.pending"),
-      dot: "#F2C94C",
-      bg: "rgba(242, 201, 76, 0.18)",
-      text: "#8a6a10",
-      ring: "rgba(242, 201, 76, 0.45)",
-      icon: Clock,
-      pulse: true,
-    },
-    approved: {
-      label: t("donations.status.approved"),
-      dot: "#1E5A46",
-      bg: "rgba(30, 90, 70, 0.14)",
-      text: "#0F3D2E",
-      ring: "rgba(30, 90, 70, 0.35)",
-      icon: CheckCircle2,
-      pulse: false,
-    },
-    rejected: {
-      label: t("donations.status.rejected"),
-      dot: "#B3261E",
-      bg: "rgba(179, 38, 30, 0.10)",
-      text: "#8a1f1a",
-      ring: "rgba(179, 38, 30, 0.35)",
-      icon: XCircle,
-      pulse: false,
-    },
-  };
-  return map;
-}
+const STATUS_META: Record<DonationStatus, { dot: string; bg: string; text: string; ring: string; icon: typeof Clock; pulse: boolean }> = {
+  0: {
+    dot: "#F2C94C",
+    bg: "rgba(242, 201, 76, 0.18)",
+    text: "#8a6a10",
+    ring: "rgba(242, 201, 76, 0.45)",
+    icon: Clock,
+    pulse: true,
+  },
+  1: {
+    dot: "#1E5A46",
+    bg: "rgba(30, 90, 70, 0.14)",
+    text: "#0F3D2E",
+    ring: "rgba(30, 90, 70, 0.35)",
+    icon: CheckCircle2,
+    pulse: false,
+  },
+  "-1": {
+    dot: "#B3261E",
+    bg: "rgba(179, 38, 30, 0.10)",
+    text: "#8a1f1a",
+    ring: "rgba(179, 38, 30, 0.35)",
+    icon: XCircle,
+    pulse: false,
+  },
+};
 
 function localeFor(lng?: string) {
   return lng?.startsWith("ar") ? "ar-EG" : "en-US";
 }
 
-function StatusBadge({ status }: { status: Status }) {
-  const m = useStatusMeta()[status];
+function StatusBadge({ status }: { status: DonationStatus }) {
+  const { t } = useTranslation();
+  const m = STATUS_META[status];
   const Icon = m.icon;
   return (
     <span
@@ -101,29 +106,27 @@ function StatusBadge({ status }: { status: Status }) {
             style={{ backgroundColor: m.dot }}
           />
         )}
-        <span
-          className="relative inline-flex h-2 w-2 rounded-full"
-          style={{ backgroundColor: m.dot }}
-        />
+        <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: m.dot }} />
       </span>
       <Icon className="h-3 w-3" />
-      {m.label}
+      {t(`enums.donation_status.${status}`)}
     </span>
   );
 }
 
-function ProgressBar({ remaining, total }: { remaining: number; total: number }) {
+function ProgressBar({ item }: { item: DonationItem }) {
   const { t, i18n } = useTranslation();
   const loc = localeFor(i18n.language);
-  const fulfilled = total - remaining;
-  const pct = total === 0 ? 0 : Math.round((fulfilled / total) * 100);
+  const fulfilled = item.quantity - item.remaining_quantity;
+  const pct = item.quantity === 0 ? 0 : Math.round((fulfilled / item.quantity) * 100);
+  const unit = t(`enums.unit.${item.unit}`, { defaultValue: item.unit });
   return (
     <div>
       <div className="mb-1.5 flex items-center justify-between text-[11px]">
         <span className="font-bold text-foreground">
-          {t("donations.card.remaining")}{" "}
-          <span className="text-gold">{remaining.toLocaleString(loc)}</span>
-          <span className="text-muted-foreground"> / {total.toLocaleString(loc)}</span>
+          {t("fields.donation_items.remaining_quantity")}{" "}
+          <span className="text-gold">{item.remaining_quantity.toLocaleString(loc)}</span>
+          <span className="text-muted-foreground"> / {item.quantity.toLocaleString(loc)} {unit}</span>
         </span>
         <span className="font-bold text-muted-foreground">{pct}%</span>
       </div>
@@ -145,8 +148,12 @@ function ProgressBar({ remaining, total }: { remaining: number; total: number })
 }
 
 function DonationCard({ d, onRequest, index }: { d: Donation; onRequest: (d: Donation) => void; index: number }) {
-  const { t } = useTranslation();
-  const exhausted = d.remaining === 0;
+  const { t, i18n } = useTranslation();
+  const loc = localeFor(i18n.language);
+  const item = d.items[0];
+  const exhausted = item.remaining_quantity === 0;
+  const sentAt = new Intl.DateTimeFormat(loc, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(d.sent_at));
+
   return (
     <motion.div
       layout
@@ -158,10 +165,7 @@ function DonationCard({ d, onRequest, index }: { d: Donation; onRequest: (d: Don
       <span
         aria-hidden
         className="absolute inset-x-0 top-0 h-1 opacity-70"
-        style={{
-          backgroundImage:
-            "linear-gradient(90deg, transparent, #F2C94C, transparent)",
-        }}
+        style={{ backgroundImage: "linear-gradient(90deg, transparent, #F2C94C, transparent)" }}
       />
 
       <div className="mb-3 flex items-start justify-between gap-2">
@@ -174,33 +178,43 @@ function DonationCard({ d, onRequest, index }: { d: Donation; onRequest: (d: Don
             <p className="mt-0.5 flex items-center gap-1 text-[10px] font-semibold text-muted-foreground">
               <span className="rounded bg-muted px-1.5 py-0.5">{d.id}</span>
               <span>·</span>
-              <span>{d.category}</span>
+              <span className="inline-flex items-center gap-0.5"><Tag className="h-2.5 w-2.5" />{t(`enums.item_type.${item.item_type}`, { defaultValue: item.item_type })}</span>
             </p>
           </div>
         </div>
         <StatusBadge status={d.status} />
       </div>
 
+      {d.description && (
+        <p className="mb-3 line-clamp-2 text-xs text-muted-foreground">{d.description}</p>
+      )}
+
       <div className="mb-3 space-y-1.5 text-xs text-muted-foreground">
         <p className="flex items-center gap-1.5">
-          <User className="h-3.5 w-3.5 text-gold" />
-          <span className="font-semibold text-foreground">{d.sender}</span>
-          <span>· {d.branch}</span>
+          <Building2 className="h-3.5 w-3.5 text-gold" />
+          <span className="font-semibold text-foreground">{d.sender_branch}</span>
         </p>
         <p className="flex items-center gap-1.5">
           <MapPin className="h-3.5 w-3.5 text-gold" />
-          {d.city}
+          {d.sender_city}
           <span className="mx-1 text-border">|</span>
           <Calendar className="h-3.5 w-3.5 text-gold" />
-          {d.date}
+          {sentAt}
         </p>
       </div>
 
-      <ProgressBar remaining={d.remaining} total={d.total} />
+      <ProgressBar item={item} />
+
+      {d.notes && (
+        <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-muted/40 p-2 text-[11px] text-muted-foreground">
+          <StickyNote className="mt-0.5 h-3 w-3 flex-shrink-0 text-gold" />
+          <span>{d.notes}</span>
+        </p>
+      )}
 
       <div className="mt-4 flex items-center gap-2">
         <button
-          disabled={exhausted || d.status === "rejected"}
+          disabled={exhausted || d.status === -1}
           onClick={() => onRequest(d)}
           className="group/btn relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-md shadow-primary/20 transition-all hover:scale-[1.02] hover:bg-primary-medium active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 dark:bg-gold dark:text-gold-foreground dark:shadow-gold/20"
         >
@@ -210,7 +224,7 @@ function DonationCard({ d, onRequest, index }: { d: Donation; onRequest: (d: Don
           />
           <Hand className="h-3.5 w-3.5" />
           <span>
-            {exhausted ? t("donations.card.exhausted") : d.status === "rejected" ? t("donations.card.unavailable") : t("donations.card.request")}
+            {exhausted ? t("donations.card.exhausted") : d.status === -1 ? t("donations.card.unavailable") : t("donations.card.request")}
           </span>
         </button>
         <button className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-background text-muted-foreground transition-all hover:border-gold hover:text-foreground">
@@ -221,26 +235,22 @@ function DonationCard({ d, onRequest, index }: { d: Donation; onRequest: (d: Don
   );
 }
 
-function RequestModal({
-  donation,
-  onClose,
-}: {
-  donation: Donation | null;
-  onClose: () => void;
-}) {
+function RequestModal({ donation, onClose }: { donation: Donation | null; onClose: () => void }) {
   const { t, i18n } = useTranslation();
   const loc = localeFor(i18n.language);
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  const item = donation?.items[0];
+
   useEffect(() => {
-    if (donation) {
-      setQty(Math.min(10, donation.remaining));
+    if (item) {
+      setQty(Math.min(10, item.remaining_quantity));
       setNote("");
       setSubmitted(false);
     }
-  }, [donation]);
+  }, [item]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -248,13 +258,13 @@ function RequestModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  const max = donation?.remaining ?? 0;
-  const pct = donation ? Math.round((qty / donation.total) * 100) : 0;
-  const unitLabel = donation ? t(`donations.units.${donation.unit}`, { defaultValue: donation.unit }) : "";
+  const max = item?.remaining_quantity ?? 0;
+  const pct = item ? Math.round((qty / item.quantity) * 100) : 0;
+  const unitLabel = item ? t(`enums.unit.${item.unit}`, { defaultValue: item.unit }) : "";
 
   return (
     <AnimatePresence>
-      {donation && (
+      {donation && item && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -307,17 +317,19 @@ function RequestModal({
                   <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8a6a10]">
                     {t("donations.modal.eyebrow")}
                   </p>
-                  <h2 className="mt-1 text-xl font-extrabold text-[#0F3D2E]">
-                    {donation.title}
-                  </h2>
+                  <h2 className="mt-1 text-xl font-extrabold text-[#0F3D2E]">{donation.title}</h2>
                   <p className="mt-1 text-xs text-[#0F3D2E]/70">
-                    {t("donations.modal.from")} <span className="font-bold">{donation.sender}</span> ·{" "}
-                    {donation.branch} · {donation.city}
+                    {t("donations.modal.from")} <span className="font-bold">{donation.sender_branch}</span> · {donation.sender_city}
                   </p>
+
+                  <div className="mt-4 rounded-2xl border border-white/40 bg-white/40 p-3 text-xs text-[#0F3D2E]/80">
+                    <p className="font-bold text-[#0F3D2E]">{t("donations.modal.item")}: {item.name}</p>
+                    {item.description && <p className="mt-0.5">{item.description}</p>}
+                  </div>
 
                   <div className="mt-5">
                     <label className="text-xs font-bold text-[#0F3D2E]">
-                      {t("donations.modal.quantity")}
+                      {t("donations.modal.requested_quantity")}
                     </label>
                     <div className="mt-2 flex items-center gap-3 rounded-2xl border border-white/40 bg-white/50 p-2 backdrop-blur-sm">
                       <button
@@ -331,14 +343,10 @@ function RequestModal({
                         value={qty}
                         min={1}
                         max={max}
-                        onChange={(e) =>
-                          setQty(Math.max(1, Math.min(max, Number(e.target.value) || 1)))
-                        }
+                        onChange={(e) => setQty(Math.max(1, Math.min(max, Number(e.target.value) || 1)))}
                         className="h-10 w-full bg-transparent text-center text-2xl font-extrabold text-[#0F3D2E] outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       />
-                      <span className="text-xs font-bold text-[#0F3D2E]/70">
-                        {unitLabel}
-                      </span>
+                      <span className="text-xs font-bold text-[#0F3D2E]/70">{unitLabel}</span>
                       <button
                         onClick={() => setQty((q) => Math.min(max, q + 1))}
                         className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#F2C94C] text-[#0F3D2E] transition-all hover:scale-105 active:scale-95"
@@ -406,9 +414,7 @@ function RequestModal({
                   >
                     <CheckCircle2 className="h-8 w-8" strokeWidth={2.5} />
                   </motion.div>
-                  <h3 className="mt-4 text-xl font-extrabold text-[#0F3D2E]">
-                    {t("donations.modal.successTitle")}
-                  </h3>
+                  <h3 className="mt-4 text-xl font-extrabold text-[#0F3D2E]">{t("donations.modal.successTitle")}</h3>
                   <p className="mt-1 text-sm text-[#0F3D2E]/70">
                     {t("donations.modal.successBody", {
                       qty: qty.toLocaleString(loc),
@@ -438,41 +444,31 @@ function DonationsPage() {
   const [view, setView] = useState<"kanban" | "list">("kanban");
   const [active, setActive] = useState<Donation | null>(null);
   const seed = t("donations.list", { returnObjects: true }) as Donation[];
-  const statusMeta = useStatusMeta();
 
-  const filtered = useMemo(
-    () => {
-      const q = query.toLowerCase();
-      return seed.filter(
-        (d) =>
-          !query ||
-          d.title.toLowerCase().includes(q) ||
-          d.sender.toLowerCase().includes(q) ||
-          d.city.toLowerCase().includes(q),
-      );
-    },
-    [query, seed],
-  );
+  const filtered = useMemo(() => {
+    const q = query.toLowerCase();
+    return seed.filter(
+      (d) =>
+        !query ||
+        d.title.toLowerCase().includes(q) ||
+        d.sender_branch.toLowerCase().includes(q) ||
+        d.sender_city.toLowerCase().includes(q),
+    );
+  }, [query, seed]);
 
-  const columns: { key: Status; label: string; hint: string }[] = [
-    { key: "pending", label: t("donations.status.pending"), hint: t("donations.columns.pendingHint") },
-    { key: "approved", label: t("donations.status.approved"), hint: t("donations.columns.approvedHint") },
-    { key: "rejected", label: t("donations.status.rejected"), hint: t("donations.columns.rejectedHint") },
+  const columns: { key: DonationStatus; label: string; hint: string }[] = [
+    { key: 0, label: t("donations.columns.pending"), hint: t("donations.columns.pendingHint") },
+    { key: 1, label: t("donations.columns.approved"), hint: t("donations.columns.approvedHint") },
+    { key: -1, label: t("donations.columns.rejected"), hint: t("donations.columns.rejectedHint") },
   ];
 
   return (
     <AppShell>
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">
-            {t("donations.eyebrow")}
-          </p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight">
-            {t("donations.title")}
-          </h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            {t("donations.subtitle")}
-          </p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">{t("donations.eyebrow")}</p>
+          <h1 className="mt-2 text-3xl font-extrabold tracking-tight">{t("donations.title")}</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">{t("donations.subtitle")}</p>
         </div>
         <button className="inline-flex items-center gap-2 self-start rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:bg-primary-medium active:scale-95 dark:bg-gold dark:text-gold-foreground dark:shadow-gold/20">
           <Plus className="h-4 w-4" />
@@ -525,7 +521,7 @@ function DonationsPage() {
         <div className="grid gap-5 lg:grid-cols-3">
           {columns.map((col) => {
             const items = filtered.filter((d) => d.status === col.key);
-            const m = statusMeta[col.key];
+            const m = STATUS_META[col.key];
             return (
               <section
                 key={col.key}
@@ -533,10 +529,7 @@ function DonationsPage() {
               >
                 <header className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: m.dot }}
-                    />
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: m.dot }} />
                     <h2 className="text-sm font-extrabold">{col.label}</h2>
                     <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
                       {items.length}

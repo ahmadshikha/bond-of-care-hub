@@ -12,6 +12,10 @@ import {
   Phone,
   MoreHorizontal,
   Mail,
+  FileText,
+  Paperclip,
+  Star,
+  Map as MapIcon,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import i18n from "@/i18n";
@@ -26,74 +30,113 @@ export const Route = createFileRoute("/institutions")({
   component: InstitutionsPage,
 });
 
-type InstType = "donor" | "charity" | "both";
+type InstitutionType = 1 | 2 | 3;
+
+interface Address {
+  city: string;
+  state: string;
+  street: string;
+  latitude: number;
+  longitude: number;
+  details: string;
+}
 
 interface Branch {
+  id: string;
   name: string;
-  city: string;
-  street: string;
+  description: string;
+  email: string;
   phone: string;
+  is_main_branch: boolean;
+  address: Address;
 }
 
 interface Institution {
   id: string;
   name: string;
-  initials: string;
+  description: string;
+  logo: string | null;
   owner: string;
-  type: InstType;
   email: string;
-  hue: string;
+  phone: string;
+  type: InstitutionType;
+  is_active: boolean;
+  attachments: string[];
   branches: Branch[];
 }
 
-function useTypeMeta() {
-  const { t } = useTranslation();
-  const meta: Record<InstType, { label: string; className: string; style?: React.CSSProperties }> = {
-    donor: {
-      label: t("institutions.types.donor"),
-      className: "text-[#8a6a10] dark:text-gold",
-      style: { backgroundColor: "rgba(242, 201, 76, 0.20)", borderColor: "rgba(242, 201, 76, 0.45)" },
+const TYPE_STYLES: Record<InstitutionType, { className: string; style: React.CSSProperties }> = {
+  1: {
+    className: "text-[#8a6a10] dark:text-gold",
+    style: { backgroundColor: "rgba(242, 201, 76, 0.20)", borderColor: "rgba(242, 201, 76, 0.45)" },
+  },
+  2: {
+    className: "text-[#0F3D2E] dark:text-emerald-200",
+    style: { backgroundColor: "rgba(30, 90, 70, 0.10)", borderColor: "rgba(30, 90, 70, 0.30)" },
+  },
+  3: {
+    className: "text-[#0F3D2E] dark:text-foreground",
+    style: {
+      backgroundImage: "linear-gradient(135deg, rgba(242,201,76,0.22), rgba(30,90,70,0.14))",
+      borderColor: "rgba(15, 61, 46, 0.35)",
     },
-    charity: {
-      label: t("institutions.types.charity"),
-      className: "text-[#0F3D2E] dark:text-emerald-200",
-      style: { backgroundColor: "rgba(30, 90, 70, 0.10)", borderColor: "rgba(30, 90, 70, 0.30)" },
-    },
-    both: {
-      label: t("institutions.types.both"),
-      className: "text-[#0F3D2E] dark:text-foreground",
-      style: {
-        backgroundImage:
-          "linear-gradient(135deg, rgba(242,201,76,0.22), rgba(30,90,70,0.14))",
-        borderColor: "rgba(15, 61, 46, 0.35)",
-      },
-    },
-  };
-  return meta;
-}
+  },
+};
 
-function TypePill({ type }: { type: InstType }) {
-  const meta = useTypeMeta()[type];
+function TypePill({ type }: { type: InstitutionType }) {
+  const { t } = useTranslation();
+  const s = TYPE_STYLES[type];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${meta.className}`}
-      style={meta.style}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${s.className}`}
+      style={s.style}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-current opacity-70" />
-      {meta.label}
+      {t(`enums.institution_type.${type}`)}
     </span>
   );
 }
 
-function Avatar({ initials, hue }: { initials: string; hue: string }) {
+function StatusDot({ active }: { active: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${
+        active
+          ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+          : "border-border bg-muted text-muted-foreground"
+      }`}
+    >
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${active ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/50"}`}
+      />
+      {active ? t("common.active") : t("common.inactive")}
+    </span>
+  );
+}
+
+function initialsOf(name: string) {
+  return name
+    .replace(/[^\p{L}\s]/gu, "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w.charAt(0))
+    .join("");
+}
+
+function hueOf(type: InstitutionType) {
+  return type === 1 ? "#F2C94C" : type === 2 ? "#1E5A46" : "#0F3D2E";
+}
+
+function Avatar({ name, type }: { name: string; type: InstitutionType }) {
+  const hue = hueOf(type);
   return (
     <span
       className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl text-base font-extrabold text-white shadow-md"
-      style={{
-        backgroundImage: `linear-gradient(135deg, ${hue}, color-mix(in oklab, ${hue} 60%, #0F3D2E))`,
-      }}
+      style={{ backgroundImage: `linear-gradient(135deg, ${hue}, color-mix(in oklab, ${hue} 60%, #0F3D2E))` }}
     >
-      {initials}
+      {initialsOf(name)}
     </span>
   );
 }
@@ -111,7 +154,7 @@ function InstitutionRow({ inst, index }: { inst: Institution; index: number }) {
     >
       <div className="flex flex-col gap-4 p-5 md:flex-row md:items-center">
         <div className="flex flex-1 items-center gap-4">
-          <Avatar initials={inst.initials} hue={inst.hue} />
+          <Avatar name={inst.name} type={inst.type} />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="truncate text-base font-bold">{inst.name}</h3>
@@ -119,15 +162,17 @@ function InstitutionRow({ inst, index }: { inst: Institution; index: number }) {
                 {inst.id}
               </span>
             </div>
-            <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Mail className="h-3 w-3" /> {inst.email}
-            </p>
+            <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{inst.description}</p>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1"><Mail className="h-3 w-3" /> {inst.email}</span>
+              <span className="inline-flex items-center gap-1" dir="ltr"><Phone className="h-3 w-3" /> {inst.phone}</span>
+            </div>
           </div>
         </div>
 
-        <div className="hidden min-w-[180px] flex-col md:flex">
+        <div className="hidden min-w-[160px] flex-col md:flex">
           <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
-            {t("institutions.ownerLabel")}
+            {t("fields.institutions.owner")}
           </span>
           <span className="mt-0.5 text-sm font-semibold">{inst.owner}</span>
         </div>
@@ -136,15 +181,22 @@ function InstitutionRow({ inst, index }: { inst: Institution; index: number }) {
           <TypePill type={inst.type} />
         </div>
 
+        <div className="hidden min-w-[120px] md:block">
+          <StatusDot active={inst.is_active} />
+        </div>
+
         <div className="hidden min-w-[110px] items-center gap-1.5 text-sm text-muted-foreground md:flex">
           <Building2 className="h-4 w-4 text-gold" />
           <span className="font-bold text-foreground">{inst.branches.length}</span>
           <span>{t("common.branch", { count: inst.branches.length })}</span>
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex flex-wrap items-center gap-2 md:hidden">
           <TypePill type={inst.type} />
-          <span className="text-xs text-muted-foreground">· {inst.branches.length} {t("common.branch", { count: inst.branches.length })}</span>
+          <StatusDot active={inst.is_active} />
+          <span className="text-xs text-muted-foreground">
+            · {inst.branches.length} {t("common.branch", { count: inst.branches.length })}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -182,6 +234,35 @@ function InstitutionRow({ inst, index }: { inst: Institution; index: number }) {
                   "linear-gradient(to bottom, color-mix(in oklab, #1E5A46 5%, transparent), transparent)",
               }}
             >
+              {/* Attachments */}
+              <div className="mb-5">
+                <div className="mb-2 flex items-center gap-2">
+                  <Paperclip className="h-3.5 w-3.5 text-gold" />
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-foreground">
+                    {t("institutions.attachmentsLabel")}
+                  </h4>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
+                    {inst.attachments.length}
+                  </span>
+                </div>
+                {inst.attachments.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">{t("institutions.noAttachments")}</p>
+                ) : (
+                  <ul className="flex flex-wrap gap-2">
+                    {inst.attachments.map((a) => (
+                      <li
+                        key={a}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-foreground"
+                      >
+                        <FileText className="h-3 w-3 text-gold" />
+                        {a}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Branches */}
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="h-1.5 w-6 rounded-full bg-gold" />
@@ -195,41 +276,65 @@ function InstitutionRow({ inst, index }: { inst: Institution; index: number }) {
                 </button>
               </div>
 
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-2">
                 {inst.branches.map((b, i) => (
                   <motion.div
-                    key={b.name}
+                    key={b.id}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
                     className="group relative overflow-hidden rounded-xl border border-border bg-background p-4 transition-all hover:-translate-y-0.5 hover:border-gold/60 hover:shadow-md"
                   >
-                    <span
-                      aria-hidden
-                      className="absolute inset-y-3 end-0 w-[3px] rounded-full bg-gold opacity-0 transition-opacity group-hover:opacity-100"
-                    />
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary dark:bg-gold/15 dark:text-gold">
                           <Building2 className="h-4 w-4" />
                         </span>
                         <div>
-                          <h5 className="text-sm font-bold leading-tight">{b.name}</h5>
+                          <h5 className="flex items-center gap-1.5 text-sm font-bold leading-tight">
+                            {b.name}
+                            {b.is_main_branch && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-gold/20 px-2 py-0.5 text-[9px] font-bold text-[#8a6a10] dark:text-gold">
+                                <Star className="h-2.5 w-2.5 fill-current" />
+                                {t("institutions.mainBranchBadge")}
+                              </span>
+                            )}
+                          </h5>
                           <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                            {b.city}
+                            {b.address.city} · {b.address.state}
                           </p>
                         </div>
                       </div>
+                      <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                        {b.id}
+                      </span>
                     </div>
+
+                    {b.description && (
+                      <p className="mt-2 text-xs text-muted-foreground">{b.description}</p>
+                    )}
 
                     <div className="mt-3 space-y-1.5 text-xs">
                       <p className="flex items-start gap-1.5 text-muted-foreground">
                         <MapPin className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-gold" />
-                        <span className="leading-relaxed">{b.street}</span>
+                        <span className="leading-relaxed">
+                          {b.address.street}
+                          {b.address.details && <span className="text-muted-foreground/70"> · {b.address.details}</span>}
+                        </span>
                       </p>
                       <p className="flex items-center gap-1.5 text-muted-foreground" dir="ltr">
                         <Phone className="h-3.5 w-3.5 flex-shrink-0 text-gold" />
                         <span className="font-semibold tracking-wide">{b.phone}</span>
+                      </p>
+                      <p className="flex items-center gap-1.5 text-muted-foreground">
+                        <Mail className="h-3.5 w-3.5 flex-shrink-0 text-gold" />
+                        <span>{b.email}</span>
+                      </p>
+                      <p className="flex items-center gap-1.5 text-muted-foreground" dir="ltr">
+                        <MapIcon className="h-3.5 w-3.5 flex-shrink-0 text-gold" />
+                        <span className="font-mono text-[10px]">
+                          {b.address.latitude.toFixed(4)}, {b.address.longitude.toFixed(4)}
+                        </span>
                       </p>
                     </div>
                   </motion.div>
@@ -246,7 +351,7 @@ function InstitutionRow({ inst, index }: { inst: Institution; index: number }) {
 function InstitutionsPage() {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<"all" | InstType>("all");
+  const [filter, setFilter] = useState<"all" | InstitutionType>("all");
   const institutions = t("institutions.list", { returnObjects: true }) as Institution[];
 
   const filtered = institutions.filter((i) => {
@@ -262,16 +367,16 @@ function InstitutionsPage() {
 
   const counts = {
     all: institutions.length,
-    donor: institutions.filter((i) => i.type === "donor").length,
-    charity: institutions.filter((i) => i.type === "charity").length,
-    both: institutions.filter((i) => i.type === "both").length,
-  };
+    1: institutions.filter((i) => i.type === 1).length,
+    2: institutions.filter((i) => i.type === 2).length,
+    3: institutions.filter((i) => i.type === 3).length,
+  } as const;
 
-  const tabs: { key: "all" | InstType; label: string }[] = [
+  const tabs: { key: "all" | InstitutionType; label: string }[] = [
     { key: "all", label: t("institutions.tabs.all") },
-    { key: "donor", label: t("institutions.tabs.donor") },
-    { key: "charity", label: t("institutions.tabs.charity") },
-    { key: "both", label: t("institutions.tabs.both") },
+    { key: 1, label: t("institutions.tabs.1") },
+    { key: 2, label: t("institutions.tabs.2") },
+    { key: 3, label: t("institutions.tabs.3") },
   ];
 
   return (
@@ -281,12 +386,8 @@ function InstitutionsPage() {
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">
             {t("institutions.eyebrow")}
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight">
-            {t("institutions.title")}
-          </h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            {t("institutions.subtitle")}
-          </p>
+          <h1 className="mt-2 text-3xl font-extrabold tracking-tight">{t("institutions.title")}</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">{t("institutions.subtitle")}</p>
         </div>
         <button className="group inline-flex items-center gap-2 self-start rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:bg-primary-medium active:scale-95 dark:bg-gold dark:text-gold-foreground dark:shadow-gold/20">
           <Plus className="h-4 w-4" />
@@ -310,7 +411,7 @@ function InstitutionsPage() {
             const active = filter === tab.key;
             return (
               <button
-                key={tab.key}
+                key={String(tab.key)}
                 onClick={() => setFilter(tab.key)}
                 className={`relative rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
                   active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
@@ -339,10 +440,11 @@ function InstitutionsPage() {
         </button>
       </div>
 
-      <div className="mb-2 hidden grid-cols-[1fr_180px_140px_110px_auto] gap-4 px-5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground md:grid">
+      <div className="mb-2 hidden grid-cols-[1fr_160px_140px_120px_110px_auto] gap-4 px-5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground md:grid">
         <span>{t("institutions.columns.institution")}</span>
         <span>{t("institutions.columns.owner")}</span>
         <span>{t("institutions.columns.type")}</span>
+        <span>{t("institutions.columns.status")}</span>
         <span>{t("institutions.columns.branches")}</span>
         <span className="text-end">{t("institutions.columns.actions")}</span>
       </div>

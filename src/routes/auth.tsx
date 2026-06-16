@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Mail, Lock, User, Phone, ArrowLeft, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, Phone, AtSign, Cake, ArrowLeft, ArrowRight } from "lucide-react";
 import { FloatingInput } from "@/components/floating-input";
 import { KawnLogo } from "@/components/kawn-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -25,6 +25,7 @@ function AuthPage() {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language?.startsWith("ar");
   const [mode, setMode] = useState<Mode>("login");
+  const [gender, setGender] = useState<"male" | "female">("male");
   const navigate = useNavigate();
   const Arrow = isRtl ? ArrowLeft : ArrowRight;
 
@@ -102,41 +103,87 @@ function AuthPage() {
                     navigate({ to: "/dashboard" });
                   }}
                 >
-                  {mode === "register" && (
-                    <FloatingInput label={t("auth.fields.fullName")} icon={<User className="h-4 w-4" />} autoComplete="name" />
-                  )}
-                  <FloatingInput
-                    label={t("auth.fields.email")}
-                    type="email"
-                    icon={<Mail className="h-4 w-4" />}
-                    autoComplete="email"
-                  />
-                  {mode === "register" && (
-                    <FloatingInput label={t("auth.fields.phone")} type="tel" icon={<Phone className="h-4 w-4" />} />
-                  )}
-                  <FloatingInput
-                    label={t("auth.fields.password")}
-                    type="password"
-                    icon={<Lock className="h-4 w-4" />}
-                    autoComplete={mode === "login" ? "current-password" : "new-password"}
-                  />
-
-                  {mode === "login" && (
-                    <div className="flex items-center justify-between text-xs">
-                      <label className="inline-flex items-center gap-2 text-muted-foreground">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-border accent-[var(--gold)]"
+                  {mode === "register" ? (
+                    <>
+                      <div className="grid grid-cols-2 gap-3">
+                        <FloatingInput label={t("fields.users.first_name")} icon={<User className="h-4 w-4" />} autoComplete="given-name" />
+                        <FloatingInput label={t("fields.users.last_name")} icon={<User className="h-4 w-4" />} autoComplete="family-name" />
+                      </div>
+                      <FloatingInput label={t("fields.users.username")} icon={<AtSign className="h-4 w-4" />} autoComplete="username" />
+                      <FloatingInput
+                        label={t("fields.users.email")}
+                        type="email"
+                        icon={<Mail className="h-4 w-4" />}
+                        autoComplete="email"
+                      />
+                      <FloatingInput label={t("fields.users.phone")} type="tel" icon={<Phone className="h-4 w-4" />} />
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-xs font-semibold text-muted-foreground ps-1">
+                            {t("fields.users.gender")}
+                          </label>
+                          <div className="flex h-12 items-center gap-1 rounded-xl border border-border bg-card p-1">
+                            {(["male", "female"] as const).map((g) => {
+                              const active = gender === g;
+                              return (
+                                <button
+                                  type="button"
+                                  key={g}
+                                  onClick={() => setGender(g)}
+                                  className={`flex-1 rounded-lg px-2 py-1.5 text-xs font-bold transition-all ${
+                                    active
+                                      ? "bg-primary text-primary-foreground dark:bg-gold dark:text-gold-foreground"
+                                      : "text-muted-foreground hover:text-foreground"
+                                  }`}
+                                >
+                                  {t(`enums.gender.${g}`)}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <FloatingInput
+                          label={t("fields.users.birthday")}
+                          type="date"
+                          icon={<Cake className="h-4 w-4" />}
                         />
-                        {t("auth.login.remember")}
-                      </label>
-                      <a
-                        href="#"
-                        className="font-semibold text-primary-medium hover:text-primary dark:text-gold dark:hover:text-gold/80"
-                      >
-                        {t("auth.login.forgot")}
-                      </a>
-                    </div>
+                      </div>
+                      <FloatingInput
+                        label={t("fields.users.password")}
+                        type="password"
+                        icon={<Lock className="h-4 w-4" />}
+                        autoComplete="new-password"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <FloatingInput
+                        label={t("auth.login.identifier")}
+                        icon={<AtSign className="h-4 w-4" />}
+                        autoComplete="username"
+                      />
+                      <FloatingInput
+                        label={t("fields.users.password")}
+                        type="password"
+                        icon={<Lock className="h-4 w-4" />}
+                        autoComplete="current-password"
+                      />
+                      <div className="flex items-center justify-between text-xs">
+                        <label className="inline-flex items-center gap-2 text-muted-foreground">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-border accent-[var(--gold)]"
+                          />
+                          {t("auth.login.remember")}
+                        </label>
+                        <a
+                          href="#"
+                          className="font-semibold text-primary-medium hover:text-primary dark:text-gold dark:hover:text-gold/80"
+                        >
+                          {t("auth.login.forgot")}
+                        </a>
+                      </div>
+                    </>
                   )}
 
                   <button
@@ -225,22 +272,15 @@ function AuthPage() {
                   <KawnLogo size={64} />
                 </div>
                 <h3 className="text-4xl font-extrabold tracking-tight text-[#F8F6F0]">{t("brand.name")}</h3>
-                <p className="mt-2 text-sm font-medium text-[#F2C94C]">
-                  {t("brand.tagline")}
-                </p>
+                <p className="mt-2 text-sm font-medium text-[#F2C94C]">{t("brand.tagline")}</p>
                 <div className="mt-6 h-px w-12 mx-auto bg-[#F2C94C]/40" />
-                <p className="mt-6 text-sm leading-relaxed text-[#F8F6F0]/80">
-                  {t("brand.description")}
-                </p>
+                <p className="mt-6 text-sm leading-relaxed text-[#F8F6F0]/80">{t("brand.description")}</p>
               </motion.div>
             </div>
 
             <div className="grid grid-cols-3 gap-4 text-center">
               {stats.map((s) => (
-                <div
-                  key={s.l}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur"
-                >
+                <div key={s.l} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
                   <div className="text-2xl font-extrabold text-[#F2C94C]">{s.k}</div>
                   <div className="mt-1 text-[11px] text-[#F8F6F0]/70">{s.l}</div>
                 </div>

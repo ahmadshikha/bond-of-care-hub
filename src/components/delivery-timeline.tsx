@@ -3,23 +3,26 @@ import { useTranslation } from "react-i18next";
 import { Clock, PackageOpen, Truck, PackageCheck, Check } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export type DeliveryStatus = "pending" | "picked_up" | "in_transit" | "delivered";
+// ERD delivery status: 0=Pending, 1=Picked Up, 3=In Transit, 4=Delivered
+export type DeliveryStatus = 0 | 1 | 3 | 4;
 
-const ORDER: DeliveryStatus[] = ["pending", "picked_up", "in_transit", "delivered"];
+const ORDER: DeliveryStatus[] = [0, 1, 3, 4];
 
 const STEP_ICONS: Record<DeliveryStatus, LucideIcon> = {
-  pending: Clock,
-  picked_up: PackageOpen,
-  in_transit: Truck,
-  delivered: PackageCheck,
+  0: Clock,
+  1: PackageOpen,
+  3: Truck,
+  4: PackageCheck,
 };
 
 interface Props {
   current: DeliveryStatus;
-  timestamps?: Partial<Record<DeliveryStatus, string>>;
+  // Only `picked_at` and `delivered_at` exist on the ERD `deliveries` table.
+  picked_at?: string;
+  delivered_at?: string;
 }
 
-export function DeliveryTimeline({ current, timestamps = {} }: Props) {
+export function DeliveryTimeline({ current, picked_at, delivered_at }: Props) {
   const { t, i18n } = useTranslation();
   const currentIdx = ORDER.indexOf(current);
   const loc = i18n.language?.startsWith("ar") ? "ar-EG" : "en-US";
@@ -36,6 +39,11 @@ export function DeliveryTimeline({ current, timestamps = {} }: Props) {
     } catch {
       return iso;
     }
+  };
+
+  const timestamps: Partial<Record<DeliveryStatus, string>> = {
+    1: picked_at,
+    4: delivered_at,
   };
 
   return (
@@ -109,7 +117,9 @@ export function DeliveryTimeline({ current, timestamps = {} }: Props) {
                 </h3>
                 {ts ? (
                   <p className="mt-1 text-xs font-medium" style={{ color: "#636363" }}>
-                    {fmt(ts)}
+                    {key === 1
+                      ? `${t("fields.deliveries.picked_at")}: ${fmt(ts)}`
+                      : `${t("fields.deliveries.delivered_at")}: ${fmt(ts)}`}
                   </p>
                 ) : status === "active" ? (
                   <p className="mt-1 text-xs font-medium text-[#1E5A46] dark:text-gold">
