@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { ThemeProvider } from "../components/theme-provider";
+import { RoleProvider } from "../hooks/use-role";
 import "../i18n";
 
 function NotFoundComponent() {
@@ -126,8 +127,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
+        <RoleProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </RoleProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

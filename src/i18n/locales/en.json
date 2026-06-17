@@ -154,6 +154,10 @@
   "nav": {
     "dashboard": "Dashboard",
     "donations": "Donations",
+    "myDonations": "My Donations",
+    "availableDonations": "Available Donations",
+    "receivedRequests": "Received Requests",
+    "myRequests": "My Requests",
     "institutions": "Institutions",
     "beneficiaries": "Beneficiaries",
     "requests": "Requests",
@@ -162,6 +166,18 @@
     "settings": "Settings",
     "collapse": "Collapse menu",
     "logout": "Log out"
+  },
+  "role": {
+    "label": "Role",
+    "demo": "Demo Role",
+    "demoBadge": "Preview mode",
+    "title": "Switch institution role",
+    "subtitle": "Instantly preview how the UI changes for each role.",
+    "descriptions": {
+      "1": "Post donations and review incoming requests.",
+      "2": "Browse donations and submit requests.",
+      "3": "Full access to donor and charity features."
+    }
   },
   "header": {
     "search": "Search for a donor, institution or request…",
@@ -221,6 +237,10 @@
     "title": "Super Admin Dashboard",
     "subtitle": "A complete overview of platform performance, incoming donations, and active institutions throughout the day.",
     "dailyReport": "Today's report",
+    "cta": {
+      "postDonation": "Post a Donation",
+      "makeRequest": "Make a Request"
+    },
     "stats": {
       "totalDonations": "Total Donations",
       "activeInstitutions": "Active Institutions",
