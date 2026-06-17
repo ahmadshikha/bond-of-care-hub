@@ -204,12 +204,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                       <p className="mt-0.5 text-xs text-muted-foreground">{t("header.role")}</p>
                     </div>
                     <div className="p-2 text-sm">
-                      <a className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted" href="#">
+                      <Link to="/profile" className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted">
                         <Users className="h-4 w-4" /> {t("header.profile")}
-                      </a>
-                      <a className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted" href="#">
+                      </Link>
+                      <Link to="/settings" className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-muted">
                         <Settings className="h-4 w-4" /> {t("header.settings")}
-                      </a>
+                      </Link>
                       <a
                         className="flex items-center gap-2 rounded-lg px-3 py-2 text-destructive hover:bg-destructive/10"
                         href="/auth"

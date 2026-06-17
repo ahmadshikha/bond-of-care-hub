@@ -580,6 +580,49 @@
       "phone": "+966 50 222 3344"
     }
   },
+  "profile": {
+    "meta": {
+      "title": "Kawn · My Profile",
+      "description": "Manage your personal information, security settings and institution memberships."
+    },
+    "save": "Save changes",
+    "changeAvatar": "Change profile picture",
+    "personal": {
+      "title": "Personal information",
+      "subtitle": "Update the details associated with your account.",
+      "badge": "Account"
+    },
+    "security": {
+      "title": "Change password",
+      "subtitle": "Use a strong password you don't use elsewhere.",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "update": "Update password",
+      "tip": "Use 8+ characters with letters, numbers and symbols.",
+      "strength": {
+        "veryWeak": "Very weak",
+        "weak": "Weak",
+        "fair": "Fair",
+        "strong": "Strong",
+        "veryStrong": "Very strong"
+      }
+    },
+    "institutions": {
+      "title": "My institutions",
+      "subtitle": "Institutions you are a member of, with your role in each.",
+      "joined": "Joined",
+      "roles": {
+        "admin": "Administrator",
+        "staff": "Staff member"
+      },
+      "list": [
+        { "id": "INS-001", "name": "Al-Birr Charity Foundation", "type": 2, "role": "admin", "city": "Riyadh", "joined": "2024-02-15" },
+        { "id": "INS-002", "name": "Al-Amal Trading Company", "type": 1, "role": "staff", "city": "Riyadh", "joined": "2024-06-01" },
+        { "id": "INS-003", "name": "Ihsan Humanitarian Group", "type": 3, "role": "staff", "city": "Makkah", "joined": "2025-01-20" }
+      ]
+    }
+  },
   "errors": {
     "notFoundTitle": "Page not found",
     "notFoundBody": "The page you're looking for doesn't exist or has been moved.",
