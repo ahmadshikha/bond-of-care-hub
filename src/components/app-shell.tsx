@@ -20,16 +20,32 @@ import {
 import { KawnLogo } from "./kawn-logo";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
+import { RoleSwitcher } from "./role-switcher";
+import { useRole, type InstitutionType } from "@/hooks/use-role";
 
-const nav = [
-  { to: "/dashboard", key: "dashboard", icon: LayoutDashboard },
-  { to: "/donations", key: "donations", icon: HeartHandshake },
-  { to: "/institutions", key: "institutions", icon: Building2 },
-  { to: "/beneficiaries", key: "beneficiaries", icon: Users },
-  { to: "/requests", key: "requests", icon: FileText },
-  { to: "/tracking", key: "tracking", icon: Truck },
-  { to: "/delivered", key: "delivered", icon: PackageCheck },
-  { to: "/settings", key: "settings", icon: Settings },
+type NavItem = {
+  to: string;
+  key: string;
+  icon: typeof LayoutDashboard;
+  roles: InstitutionType[];
+};
+
+const nav: NavItem[] = [
+  { to: "/dashboard", key: "dashboard", icon: LayoutDashboard, roles: [1, 2, 3] },
+  { to: "/institutions", key: "institutions", icon: Building2, roles: [1, 2, 3] },
+  // Donor-facing
+  { to: "/donations", key: "myDonations", icon: HeartHandshake, roles: [1] },
+  { to: "/requests", key: "receivedRequests", icon: FileText, roles: [1] },
+  // Charity-facing
+  { to: "/donations", key: "availableDonations", icon: HeartHandshake, roles: [2] },
+  { to: "/requests", key: "myRequests", icon: FileText, roles: [2] },
+  // Both
+  { to: "/donations", key: "donations", icon: HeartHandshake, roles: [3] },
+  { to: "/requests", key: "requests", icon: FileText, roles: [3] },
+  { to: "/beneficiaries", key: "beneficiaries", icon: Users, roles: [2, 3] },
+  { to: "/tracking", key: "tracking", icon: Truck, roles: [1, 2, 3] },
+  { to: "/delivered", key: "delivered", icon: PackageCheck, roles: [1, 2, 3] },
+  { to: "/settings", key: "settings", icon: Settings, roles: [1, 2, 3] },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -38,6 +54,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t, i18n } = useTranslation();
   const dir = i18n.language?.startsWith("ar") ? "rtl" : "ltr";
+  const { role } = useRole();
+  const visibleNav = nav.filter((n) => n.roles.includes(role));
 
   return (
     <div dir={dir} className="min-h-screen bg-background text-foreground">
@@ -72,7 +90,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
             {/* Nav */}
             <nav className="flex-1 space-y-1 px-3">
-              {nav.map((item) => {
+              {visibleNav.map((item) => {
                 const active = pathname === item.to || pathname.startsWith(item.to + "/");
                 const Icon = item.icon;
                 return (
@@ -157,6 +175,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </span>
               </button>
 
+              <RoleSwitcher />
               <ThemeToggle />
               <LanguageSwitcher />
 
