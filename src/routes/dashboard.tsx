@@ -7,9 +7,12 @@ import {
   FileClock,
   PackageCheck,
   ArrowUpRight,
+  Plus,
+  Send,
 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { StatCard } from "@/components/stat-card";
+import { RoleGate } from "@/components/role-gate";
 import i18n from "@/i18n";
 
 export const Route = createFileRoute("/dashboard")({
@@ -77,10 +80,24 @@ function DashboardPage() {
             {t("dashboard.subtitle")}
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-[0_12px_24px_-12px_rgba(15,61,46,0.6)] transition-all hover:scale-105 active:scale-95 dark:bg-gold dark:text-gold-foreground">
-          {t("dashboard.dailyReport")}
-          <ArrowUpRight className="h-4 w-4" />
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <RoleGate allow={[1, 3]}>
+            <button className="inline-flex items-center gap-2 rounded-xl border border-gold/40 bg-gold/15 px-4 py-3 text-sm font-bold text-foreground transition-all hover:scale-105 hover:bg-gold/25 active:scale-95">
+              <Plus className="h-4 w-4" />
+              {t("dashboard.cta.postDonation")}
+            </button>
+          </RoleGate>
+          <RoleGate allow={[2, 3]}>
+            <button className="inline-flex items-center gap-2 rounded-xl border border-primary-medium/30 bg-primary-medium/10 px-4 py-3 text-sm font-bold text-foreground transition-all hover:scale-105 hover:bg-primary-medium/20 active:scale-95">
+              <Send className="h-4 w-4" />
+              {t("dashboard.cta.makeRequest")}
+            </button>
+          </RoleGate>
+          <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-primary-foreground shadow-[0_12px_24px_-12px_rgba(15,61,46,0.6)] transition-all hover:scale-105 active:scale-95 dark:bg-gold dark:text-gold-foreground">
+            {t("dashboard.dailyReport")}
+            <ArrowUpRight className="h-4 w-4" />
+          </button>
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
