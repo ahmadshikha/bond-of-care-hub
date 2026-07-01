@@ -540,7 +540,7 @@ function RequestsPage() {
                         </TableRow>
                       )}
                     </AnimatePresence>
-                  </>
+                  </Fragment>
                 );
               })}
             </TableBody>
