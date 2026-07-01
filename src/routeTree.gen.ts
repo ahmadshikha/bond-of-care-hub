@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrackingRouteImport } from './routes/tracking'
+import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as InstitutionsRouteImport } from './routes/institutions'
 import { Route as DonationsRouteImport } from './routes/donations'
@@ -20,6 +21,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TrackingRoute = TrackingRouteImport.update({
   id: '/tracking',
   path: '/tracking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestsRoute = RequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
   '/profile': typeof ProfileRoute
+  '/requests': typeof RequestsRoute
   '/tracking': typeof TrackingRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
   '/profile': typeof ProfileRoute
+  '/requests': typeof RequestsRoute
   '/tracking': typeof TrackingRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
   '/profile': typeof ProfileRoute
+  '/requests': typeof RequestsRoute
   '/tracking': typeof TrackingRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/donations'
     | '/institutions'
     | '/profile'
+    | '/requests'
     | '/tracking'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/donations'
     | '/institutions'
     | '/profile'
+    | '/requests'
     | '/tracking'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/donations'
     | '/institutions'
     | '/profile'
+    | '/requests'
     | '/tracking'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   DonationsRoute: typeof DonationsRoute
   InstitutionsRoute: typeof InstitutionsRoute
   ProfileRoute: typeof ProfileRoute
+  RequestsRoute: typeof RequestsRoute
   TrackingRoute: typeof TrackingRoute
 }
 
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/tracking'
       fullPath: '/tracking'
       preLoaderRoute: typeof TrackingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/requests': {
+      id: '/requests'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof RequestsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   DonationsRoute: DonationsRoute,
   InstitutionsRoute: InstitutionsRoute,
   ProfileRoute: ProfileRoute,
+  RequestsRoute: RequestsRoute,
   TrackingRoute: TrackingRoute,
 }
 export const routeTree = rootRouteImport

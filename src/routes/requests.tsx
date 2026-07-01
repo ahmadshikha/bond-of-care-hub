@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -269,8 +269,7 @@ function RequestsPage() {
   const [tab, setTab] = useState<"all" | "0" | "1" | "-1">("all");
   const [expanded, setExpanded] = useState<string | null>(null);
 
-  // resync when language changes
-  useMemo(() => setRows(initialList), [initialList]);
+  useEffect(() => setRows(initialList), [initialList]);
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -377,9 +376,8 @@ function RequestsPage() {
                 const unitLabel = t(`enums.unit.${r.item.unit}` as const, r.item.unit);
                 const typeLabel = t(`enums.item_type.${r.item.type}` as const, r.item.type);
                 return (
-                  <>
+                  <Fragment key={r.id}>
                     <TableRow
-                      key={r.id}
                       className={cn(
                         "cursor-pointer transition-colors",
                         isOpen && "bg-[#0F3D2E]/[0.03] dark:bg-[#F2C94C]/[0.04]",
