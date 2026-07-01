@@ -580,6 +580,177 @@
       "phone": "+966 50 222 3344"
     }
   },
+  "requests": {
+    "meta": {
+      "title": "Kawn · Donation Requests",
+      "description": "Review and manage donation requests submitted by beneficiaries in Kawn."
+    },
+    "eyebrow": "Beneficiaries & Requests",
+    "title": "Donation Requests",
+    "subtitle": "Review incoming requests from beneficiaries, approve quantities and track fulfillment.",
+    "new": "New Request",
+    "searchPlaceholder": "Search by beneficiary, item or request ID…",
+    "tabs": {
+      "all": "All",
+      "0": "Pending",
+      "1": "Approved",
+      "-1": "Rejected"
+    },
+    "columns": {
+      "id": "Request",
+      "beneficiary": "Beneficiary",
+      "item": "Requested item",
+      "date": "Date",
+      "progress": "Quantity progress",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "quantities": {
+      "requested": "Requested",
+      "approved": "Approved",
+      "received": "Received",
+      "shortRequested": "Req",
+      "shortApproved": "App",
+      "shortReceived": "Rec",
+      "of": "of"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "reset": "Reset",
+      "expand": "Show details",
+      "collapse": "Hide details"
+    },
+    "details": {
+      "notesTitle": "Request notes",
+      "notesEmpty": "No notes were added to this request.",
+      "receiverTitle": "Receiver user",
+      "receiverBranchTitle": "Receiver branch",
+      "phone": "Phone",
+      "email": "Email",
+      "role": "Role"
+    },
+    "empty": "No requests match your filters.",
+    "list": [
+      {
+        "id": "REQ-2026-00412",
+        "status": 0,
+        "date": "2026-06-18T09:30:00",
+        "notes": "Please prepare for pickup Friday morning; the branch has volunteers ready to distribute right after Jumu'ah.",
+        "receiver_branch": "Al-Birr Foundation — Headquarters",
+        "receiver_branch_city": "Riyadh",
+        "receiver_user": {
+          "first_name": "Sara",
+          "last_name": "Al-Qahtani",
+          "role": "Branch Coordinator",
+          "phone": "+966 50 222 3344",
+          "email": "sara.q@albirr.org"
+        },
+        "item": {
+          "name": "Family food basket",
+          "unit": "basket",
+          "type": "food",
+          "requested_quantity": 50,
+          "approved_quantity": 50,
+          "received_quantity": 30
+        }
+      },
+      {
+        "id": "REQ-2026-00411",
+        "status": 1,
+        "date": "2026-06-17T14:05:00",
+        "notes": "Approved with reduced quantity — remaining stock reserved for a partner charity.",
+        "receiver_branch": "Ihsan Humanitarian Group — Main Center",
+        "receiver_branch_city": "Makkah",
+        "receiver_user": {
+          "first_name": "Mohammed",
+          "last_name": "Al-Zahrani",
+          "role": "Operations Manager",
+          "phone": "+966 55 100 2233",
+          "email": "m.zahrani@ihsan.org"
+        },
+        "item": {
+          "name": "Bottled water carton",
+          "unit": "carton",
+          "type": "food",
+          "requested_quantity": 20,
+          "approved_quantity": 15,
+          "received_quantity": 15
+        }
+      },
+      {
+        "id": "REQ-2026-00410",
+        "status": 0,
+        "date": "2026-06-16T11:20:00",
+        "notes": "",
+        "receiver_branch": "Orphan Sponsorship Society — Headquarters",
+        "receiver_branch_city": "Riyadh",
+        "receiver_user": {
+          "first_name": "Hind",
+          "last_name": "Al-Otaibi",
+          "role": "Program Lead",
+          "phone": "+966 55 908 7766",
+          "email": "hind.o@kafalah.org"
+        },
+        "item": {
+          "name": "Winter jacket",
+          "unit": "piece",
+          "type": "clothing",
+          "requested_quantity": 120,
+          "approved_quantity": 0,
+          "received_quantity": 0
+        }
+      },
+      {
+        "id": "REQ-2026-00409",
+        "status": -1,
+        "date": "2026-06-15T08:40:00",
+        "notes": "Rejected — beneficiary already served in the same distribution cycle.",
+        "receiver_branch": "Al-Amal Trading Company — Main Office",
+        "receiver_branch_city": "Riyadh",
+        "receiver_user": {
+          "first_name": "Noura",
+          "last_name": "Al-Subaie",
+          "role": "CSR Officer",
+          "phone": "+966 55 776 5544",
+          "email": "noura.s@alamal.sa"
+        },
+        "item": {
+          "name": "School textbook",
+          "unit": "book",
+          "type": "education",
+          "requested_quantity": 200,
+          "approved_quantity": 0,
+          "received_quantity": 0
+        }
+      },
+      {
+        "id": "REQ-2026-00408",
+        "status": 1,
+        "date": "2026-06-14T16:15:00",
+        "notes": "Delivery in progress — driver assigned.",
+        "receiver_branch": "Al-Birr Foundation — Jeddah Branch",
+        "receiver_branch_city": "Jeddah",
+        "receiver_user": {
+          "first_name": "Abdulaziz",
+          "last_name": "Al-Harthi",
+          "role": "Branch Manager",
+          "phone": "+966 55 321 4455",
+          "email": "a.harthi@albirr.org"
+        },
+        "item": {
+          "name": "Medication pack",
+          "unit": "pack",
+          "type": "medical",
+          "requested_quantity": 40,
+          "approved_quantity": 40,
+          "received_quantity": 25
+        }
+      }
+    ]
+  },
   "profile": {
     "meta": {
       "title": "Kawn · My Profile",
