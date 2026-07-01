@@ -576,6 +576,177 @@
       "phone": "+966 50 222 3344"
     }
   },
+  "requests": {
+    "meta": {
+      "title": "كَوْن · طلبات التبرع",
+      "description": "استعراض وإدارة طلبات التبرع المقدمة من المستفيدين في منصة كون."
+    },
+    "eyebrow": "المستفيدون والطلبات",
+    "title": "طلبات التبرع",
+    "subtitle": "راجع الطلبات الواردة من المستفيدين، واعتمد الكميات وتابع التسليم.",
+    "new": "طلب جديد",
+    "searchPlaceholder": "ابحث عن مستفيد، عنصر أو رقم طلب…",
+    "tabs": {
+      "all": "الكل",
+      "0": "قيد المراجعة",
+      "1": "مُعتمدة",
+      "-1": "مرفوضة"
+    },
+    "columns": {
+      "id": "الطلب",
+      "beneficiary": "المستفيد",
+      "item": "العنصر المطلوب",
+      "date": "التاريخ",
+      "progress": "تقدم الكميات",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "quantities": {
+      "requested": "المطلوبة",
+      "approved": "المعتمدة",
+      "received": "المستلمة",
+      "shortRequested": "طلب",
+      "shortApproved": "معتمد",
+      "shortReceived": "مستلم",
+      "of": "من"
+    },
+    "actions": {
+      "approve": "اعتماد",
+      "reject": "رفض",
+      "approved": "تم الاعتماد",
+      "rejected": "تم الرفض",
+      "reset": "إعادة تعيين",
+      "expand": "عرض التفاصيل",
+      "collapse": "إخفاء التفاصيل"
+    },
+    "details": {
+      "notesTitle": "ملاحظات الطلب",
+      "notesEmpty": "لم تُضف ملاحظات لهذا الطلب.",
+      "receiverTitle": "المستلم",
+      "receiverBranchTitle": "الفرع المستلم",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "role": "الدور"
+    },
+    "empty": "لا توجد طلبات مطابقة للفلاتر.",
+    "list": [
+      {
+        "id": "REQ-2026-00412",
+        "status": 0,
+        "date": "2026-06-18T09:30:00",
+        "notes": "يرجى التجهيز للاستلام صباح الجمعة؛ يتوفر لدى الفرع متطوعون للتوزيع بعد صلاة الجمعة مباشرة.",
+        "receiver_branch": "مؤسسة البرّ — المقر الرئيسي",
+        "receiver_branch_city": "الرياض",
+        "receiver_user": {
+          "first_name": "سارة",
+          "last_name": "القحطاني",
+          "role": "منسّقة الفرع",
+          "phone": "+966 50 222 3344",
+          "email": "sara.q@albirr.org"
+        },
+        "item": {
+          "name": "سلة غذائية عائلية",
+          "unit": "basket",
+          "type": "food",
+          "requested_quantity": 50,
+          "approved_quantity": 50,
+          "received_quantity": 30
+        }
+      },
+      {
+        "id": "REQ-2026-00411",
+        "status": 1,
+        "date": "2026-06-17T14:05:00",
+        "notes": "تم الاعتماد بكمية مخفّضة — احتُجِز الباقي لجمعية شريكة.",
+        "receiver_branch": "مجموعة إحسان الإنسانية — المركز الرئيسي",
+        "receiver_branch_city": "مكة المكرمة",
+        "receiver_user": {
+          "first_name": "محمد",
+          "last_name": "الزهراني",
+          "role": "مدير العمليات",
+          "phone": "+966 55 100 2233",
+          "email": "m.zahrani@ihsan.org"
+        },
+        "item": {
+          "name": "كرتون مياه معبأة",
+          "unit": "carton",
+          "type": "food",
+          "requested_quantity": 20,
+          "approved_quantity": 15,
+          "received_quantity": 15
+        }
+      },
+      {
+        "id": "REQ-2026-00410",
+        "status": 0,
+        "date": "2026-06-16T11:20:00",
+        "notes": "",
+        "receiver_branch": "جمعية كفالة اليتيم — المقر الرئيسي",
+        "receiver_branch_city": "الرياض",
+        "receiver_user": {
+          "first_name": "هند",
+          "last_name": "العتيبي",
+          "role": "مسؤولة البرامج",
+          "phone": "+966 55 908 7766",
+          "email": "hind.o@kafalah.org"
+        },
+        "item": {
+          "name": "جاكيت شتوي",
+          "unit": "piece",
+          "type": "clothing",
+          "requested_quantity": 120,
+          "approved_quantity": 0,
+          "received_quantity": 0
+        }
+      },
+      {
+        "id": "REQ-2026-00409",
+        "status": -1,
+        "date": "2026-06-15T08:40:00",
+        "notes": "تم الرفض — سبق أن استفاد المستفيد ضمن نفس دورة التوزيع.",
+        "receiver_branch": "شركة الأمل التجارية — المكتب الرئيسي",
+        "receiver_branch_city": "الرياض",
+        "receiver_user": {
+          "first_name": "نورة",
+          "last_name": "السبيعي",
+          "role": "مسؤولة المسؤولية الاجتماعية",
+          "phone": "+966 55 776 5544",
+          "email": "noura.s@alamal.sa"
+        },
+        "item": {
+          "name": "كتاب مدرسي",
+          "unit": "book",
+          "type": "education",
+          "requested_quantity": 200,
+          "approved_quantity": 0,
+          "received_quantity": 0
+        }
+      },
+      {
+        "id": "REQ-2026-00408",
+        "status": 1,
+        "date": "2026-06-14T16:15:00",
+        "notes": "التوصيل قيد التنفيذ — تم إسناد المندوب.",
+        "receiver_branch": "مؤسسة البرّ — فرع جدة",
+        "receiver_branch_city": "جدة",
+        "receiver_user": {
+          "first_name": "عبدالعزيز",
+          "last_name": "الحارثي",
+          "role": "مدير الفرع",
+          "phone": "+966 55 321 4455",
+          "email": "a.harthi@albirr.org"
+        },
+        "item": {
+          "name": "علبة أدوية",
+          "unit": "pack",
+          "type": "medical",
+          "requested_quantity": 40,
+          "approved_quantity": 40,
+          "received_quantity": 25
+        }
+      }
+    ]
+  },
   "profile": {
     "meta": {
       "title": "كَوْن · ملفي الشخصي",
