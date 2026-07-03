@@ -801,5 +801,69 @@
     "errorTitle": "This page didn't load",
     "errorBody": "Something went wrong on our end. You can try refreshing or head back home.",
     "tryAgain": "Try again"
+  },
+  "settingsPage": {
+    "meta": {
+      "title": "Kawn · Settings",
+      "description": "Manage app preferences, item types, units and regions."
+    },
+    "title": "System Settings",
+    "subtitle": "Fine-tune your workspace, catalogues and geography.",
+    "tabs": {
+      "general": "General Settings",
+      "itemTypes": "Item Types",
+      "units": "Units",
+      "regions": "Regions / States"
+    },
+    "general": {
+      "title": "App Preferences",
+      "subtitle": "Personalise how Kawn looks and speaks to you.",
+      "theme": "Theme",
+      "themeHint": "Choose your preferred visual mode.",
+      "themes": { "light": "Light", "dark": "Dark" },
+      "language": "Default Language",
+      "languageHint": "Interface language across the platform."
+    },
+    "itemTypes": {
+      "title": "Donation Categories",
+      "subtitle": "Standard categories used across donations and requests.",
+      "add": "Add New Type",
+      "name": "Category name",
+      "empty": "No item types yet. Add your first category.",
+      "samples": {
+        "food": "Food",
+        "clothes": "Clothes",
+        "medicine": "Medicine",
+        "school": "School Supplies"
+      }
+    },
+    "units": {
+      "title": "Measurement Units",
+      "subtitle": "Units used to quantify donated items.",
+      "add": "Add New Unit",
+      "name": "Unit name",
+      "abbr": "Abbreviation",
+      "empty": "No units defined. Add your first unit.",
+      "samples": {
+        "box":   { "name": "Box",    "abbr": "bx" },
+        "kg":    { "name": "Kilogram","abbr": "kg" },
+        "piece": { "name": "Piece",  "abbr": "pc" },
+        "liter": { "name": "Liter",  "abbr": "L"  }
+      }
+    },
+    "regions": {
+      "title": "Regions & States",
+      "subtitle": "Geographic regions used for institutions and delivery.",
+      "add": "Add New Region",
+      "name": "Region name",
+      "code": "Code",
+      "empty": "No regions yet. Add your first region.",
+      "samples": {
+        "riyadh": "Riyadh",
+        "mecca": "Makkah",
+        "eastern": "Eastern Province",
+        "madinah": "Madinah"
+      }
+    }
   }
 }
