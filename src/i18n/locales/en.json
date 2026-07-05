@@ -401,6 +401,30 @@
       }
     ]
   },
+  "beneficiaries": {
+    "meta": {
+      "title": "Kawn · Beneficiaries Directory",
+      "description": "Directory of charity/beneficiary institutions with branches, addresses and contact details."
+    },
+    "eyebrow": "Beneficiaries Directory",
+    "title": "Beneficiaries Directory",
+    "subtitle": "Browse charity and beneficiary institutions, filter by status and inspect their branches and addresses.",
+    "totalLabel": "Total Beneficiaries",
+    "searchPlaceholder": "Search by name, email, phone or city…",
+    "tabs": { "all": "All", "active": "Active", "inactive": "Inactive" },
+    "columns": {
+      "institution": "Institution",
+      "email": "Email",
+      "phone": "Phone",
+      "city": "City / Street",
+      "status": "Status"
+    },
+    "expand": "Expand row",
+    "collapse": "Collapse row",
+    "branchesTitle": "Branches & Addresses",
+    "mainBranchBadge": "Main branch",
+    "empty": "No beneficiaries match your search."
+  },
   "donations": {
     "meta": {
       "title": "Kawn · Donations Board",
