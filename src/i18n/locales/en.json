@@ -887,7 +887,103 @@
         "mecca": "Makkah",
         "eastern": "Eastern Province",
         "madinah": "Madinah"
-      }
     }
+  },
+  "delivered": {
+    "meta": {
+      "title": "Kawn · Delivered Requests",
+      "description": "Archive of fully delivered donation operations with delivery timestamps and quantity summaries."
+    },
+    "eyebrow": "Logistics Archive",
+    "title": "Delivered Requests",
+    "subtitle": "Browse completed donation deliveries. Every item tracked from pickup to final hand-off.",
+    "totalLabel": "Total Delivered",
+    "searchPlaceholder": "Search by beneficiary, item or delivery ID…",
+    "statusBadge": "Delivered",
+    "quantityLabel": "Received / Requested",
+    "pickedAtLabel": "Picked up",
+    "deliveredAtLabel": "Delivered at",
+    "empty": "No delivered requests match your search.",
+    "list": [
+      {
+        "id": "DEL-2026-001",
+        "beneficiary_name": "Al-Birr Charity Foundation",
+        "beneficiary_branch": "Headquarters",
+        "beneficiary_city": "Riyadh",
+        "item_name": "Family food basket",
+        "item_type": "food",
+        "unit": "basket",
+        "requested_quantity": 50,
+        "received_quantity": 50,
+        "picked_at": "2026-06-13T09:30:00",
+        "delivered_at": "2026-06-13T14:15:00"
+      },
+      {
+        "id": "DEL-2026-002",
+        "beneficiary_name": "Ihsan Humanitarian Group",
+        "beneficiary_branch": "Main Center",
+        "beneficiary_city": "Makkah",
+        "item_name": "Bottled water carton",
+        "item_type": "food",
+        "unit": "carton",
+        "requested_quantity": 15,
+        "received_quantity": 15,
+        "picked_at": "2026-06-12T08:00:00",
+        "delivered_at": "2026-06-12T11:45:00"
+      },
+      {
+        "id": "DEL-2026-003",
+        "beneficiary_name": "Orphan Sponsorship Society",
+        "beneficiary_branch": "Headquarters",
+        "beneficiary_city": "Riyadh",
+        "item_name": "Winter jacket",
+        "item_type": "clothing",
+        "unit": "piece",
+        "requested_quantity": 120,
+        "received_quantity": 120,
+        "picked_at": "2026-06-10T10:20:00",
+        "delivered_at": "2026-06-10T16:30:00"
+      },
+      {
+        "id": "DEL-2026-004",
+        "beneficiary_name": "Al-Birr Charity Foundation",
+        "beneficiary_branch": "Jeddah Branch",
+        "beneficiary_city": "Jeddah",
+        "item_name": "Medication pack",
+        "item_type": "medical",
+        "unit": "pack",
+        "requested_quantity": 40,
+        "received_quantity": 40,
+        "picked_at": "2026-06-09T07:45:00",
+        "delivered_at": "2026-06-09T12:00:00"
+      },
+      {
+        "id": "DEL-2026-005",
+        "beneficiary_name": "Ihsan Humanitarian Group",
+        "beneficiary_branch": "Madinah Branch",
+        "beneficiary_city": "Madinah",
+        "item_name": "School textbook",
+        "item_type": "education",
+        "unit": "book",
+        "requested_quantity": 200,
+        "received_quantity": 200,
+        "picked_at": "2026-06-08T09:00:00",
+        "delivered_at": "2026-06-08T15:20:00"
+      },
+      {
+        "id": "DEL-2026-006",
+        "beneficiary_name": "Al-Birr Charity Foundation",
+        "beneficiary_branch": "Headquarters",
+        "beneficiary_city": "Riyadh",
+        "item_name": "Iftar meal box",
+        "item_type": "food",
+        "unit": "meal",
+        "requested_quantity": 300,
+        "received_quantity": 300,
+        "picked_at": "2026-06-07T11:00:00",
+        "delivered_at": "2026-06-07T13:45:00"
+      }
+    ]
   }
+}
 }
