@@ -885,5 +885,101 @@
         "madinah": "المدينة المنورة"
       }
     }
+  },
+  "delivered": {
+    "meta": {
+      "title": "كَوْن · الطلبات المُسلَّمة",
+      "description": "أرشيف عمليات التبرع المكتملة مع تواريخ التسليم وملخص الكميات."
+    },
+    "eyebrow": "أرشيف اللوجستيات",
+    "title": "الطلبات المُسلَّمة",
+    "subtitle": "استعرض عمليات التبرع المكتملة. كل عنصر مُتعقَّب من الاستلام حتى التسليم النهائي.",
+    "totalLabel": "إجمالي المُسلَّم",
+    "searchPlaceholder": "ابحث بالمستفيد، العنصر أو رقم التسليم…",
+    "statusBadge": "تم التسليم",
+    "quantityLabel": "المستلمة / المطلوبة",
+    "pickedAtLabel": "وقت الاستلام",
+    "deliveredAtLabel": "وقت التسليم",
+    "empty": "لا توجد طلبات مُسلَّمة مطابقة لبحثك.",
+    "list": [
+      {
+        "id": "DEL-2026-001",
+        "beneficiary_name": "مؤسسة البر الخيرية",
+        "beneficiary_branch": "المقر الرئيسي",
+        "beneficiary_city": "الرياض",
+        "item_name": "سلة غذائية عائلية",
+        "item_type": "food",
+        "unit": "basket",
+        "requested_quantity": 50,
+        "received_quantity": 50,
+        "picked_at": "2026-06-13T09:30:00",
+        "delivered_at": "2026-06-13T14:15:00"
+      },
+      {
+        "id": "DEL-2026-002",
+        "beneficiary_name": "مجموعة إحسان الإنسانية",
+        "beneficiary_branch": "المركز الرئيسي",
+        "beneficiary_city": "مكة المكرمة",
+        "item_name": "كرتون مياه معبأة",
+        "item_type": "food",
+        "unit": "carton",
+        "requested_quantity": 15,
+        "received_quantity": 15,
+        "picked_at": "2026-06-12T08:00:00",
+        "delivered_at": "2026-06-12T11:45:00"
+      },
+      {
+        "id": "DEL-2026-003",
+        "beneficiary_name": "جمعية كفالة اليتيم",
+        "beneficiary_branch": "المقر الرئيسي",
+        "beneficiary_city": "الرياض",
+        "item_name": "جاكيت شتوي",
+        "item_type": "clothing",
+        "unit": "piece",
+        "requested_quantity": 120,
+        "received_quantity": 120,
+        "picked_at": "2026-06-10T10:20:00",
+        "delivered_at": "2026-06-10T16:30:00"
+      },
+      {
+        "id": "DEL-2026-004",
+        "beneficiary_name": "مؤسسة البر الخيرية",
+        "beneficiary_branch": "فرع جدة",
+        "beneficiary_city": "جدة",
+        "item_name": "علبة أدوية",
+        "item_type": "medical",
+        "unit": "pack",
+        "requested_quantity": 40,
+        "received_quantity": 40,
+        "picked_at": "2026-06-09T07:45:00",
+        "delivered_at": "2026-06-09T12:00:00"
+      },
+      {
+        "id": "DEL-2026-005",
+        "beneficiary_name": "مجموعة إحسان الإنسانية",
+        "beneficiary_branch": "فرع المدينة",
+        "beneficiary_city": "المدينة المنورة",
+        "item_name": "كتاب مدرسي",
+        "item_type": "education",
+        "unit": "book",
+        "requested_quantity": 200,
+        "received_quantity": 200,
+        "picked_at": "2026-06-08T09:00:00",
+        "delivered_at": "2026-06-08T15:20:00"
+      },
+      {
+        "id": "DEL-2026-006",
+        "beneficiary_name": "مؤسسة البر الخيرية",
+        "beneficiary_branch": "المقر الرئيسي",
+        "beneficiary_city": "الرياض",
+        "item_name": "علبة وجبة إفطار",
+        "item_type": "food",
+        "unit": "meal",
+        "requested_quantity": 300,
+        "received_quantity": 300,
+        "picked_at": "2026-06-07T11:00:00",
+        "delivered_at": "2026-06-07T13:45:00"
+      }
+    ]
   }
 }

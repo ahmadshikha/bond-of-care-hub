@@ -15,6 +15,7 @@ import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as InstitutionsRouteImport } from './routes/institutions'
 import { Route as DonationsRouteImport } from './routes/donations'
+import { Route as DeliveredRouteImport } from './routes/delivered'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as BeneficiariesRouteImport } from './routes/beneficiaries'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -50,6 +51,11 @@ const DonationsRoute = DonationsRouteImport.update({
   path: '/donations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeliveredRoute = DeliveredRouteImport.update({
+  id: '/delivered',
+  path: '/delivered',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/beneficiaries': typeof BeneficiariesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivered': typeof DeliveredRoute
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
   '/profile': typeof ProfileRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/beneficiaries': typeof BeneficiariesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivered': typeof DeliveredRoute
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
   '/profile': typeof ProfileRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/beneficiaries': typeof BeneficiariesRoute
   '/dashboard': typeof DashboardRoute
+  '/delivered': typeof DeliveredRoute
   '/donations': typeof DonationsRoute
   '/institutions': typeof InstitutionsRoute
   '/profile': typeof ProfileRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beneficiaries'
     | '/dashboard'
+    | '/delivered'
     | '/donations'
     | '/institutions'
     | '/profile'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beneficiaries'
     | '/dashboard'
+    | '/delivered'
     | '/donations'
     | '/institutions'
     | '/profile'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/beneficiaries'
     | '/dashboard'
+    | '/delivered'
     | '/donations'
     | '/institutions'
     | '/profile'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BeneficiariesRoute: typeof BeneficiariesRoute
   DashboardRoute: typeof DashboardRoute
+  DeliveredRoute: typeof DeliveredRoute
   DonationsRoute: typeof DonationsRoute
   InstitutionsRoute: typeof InstitutionsRoute
   ProfileRoute: typeof ProfileRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DonationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/delivered': {
+      id: '/delivered'
+      path: '/delivered'
+      fullPath: '/delivered'
+      preLoaderRoute: typeof DeliveredRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BeneficiariesRoute: BeneficiariesRoute,
   DashboardRoute: DashboardRoute,
+  DeliveredRoute: DeliveredRoute,
   DonationsRoute: DonationsRoute,
   InstitutionsRoute: InstitutionsRoute,
   ProfileRoute: ProfileRoute,
@@ -250,13 +271,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
